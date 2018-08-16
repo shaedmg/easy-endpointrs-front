@@ -23,7 +23,6 @@ export default {
   data () {
     return {
       users: [],
-      user: '',
       email: '',
       username: '',
       password: '',
@@ -35,13 +34,12 @@ export default {
     login() {
       this.state = false;
       axios.get('http://localhost:3333/api/users').then(res => this.users = res.data);
-        this.user = this.users.find(user => (user.email === this.email && user.password === this.password));
-      if (this.user != undefined) {
-        this.$router.replace({ name: 'Resource', params: { username : this.user.username }});
+      const user = this.users.find(user => (user.email === this.email && user.password === this.password));
+      if (user != undefined) {
+        this.$router.replace({ name: 'Resource', params: { username : user.username }});
       } else {
         this.msg = 'Username or Password Incorrect'
         this.state = true;
-        console.log("no esta");
       }
 
     }
