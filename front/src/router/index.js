@@ -26,7 +26,7 @@ export default new Router({
       component: Login
     },
     {
-      path: '/resource/:username',
+      path: '/:username/',
       name: 'Resource',
       component: Resource,
     }

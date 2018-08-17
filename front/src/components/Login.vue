@@ -3,9 +3,7 @@
     <nav>
       <form action="">
         <h3>EasyEndPoints</h3>
-        <label>Username</label>
         <input type="email" placeholder="Email..." id="email_field" v-model="email"/>
-        <label>Password</label>
         <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
         <a @click="login()">Sign In</a>
@@ -49,11 +47,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 h3 {
   width: 100%;
   padding-bottom: 10px;
   margin: 0px;
   padding: 0px;
+  margin-bottom: 20px;
 }
 label {
   width: 260px;
@@ -64,7 +64,7 @@ label {
 }
 nav {
   width: 100%;
-  height: 1000px;
+  height: 800px;
   /*IMPORTANTE*/
   display: flex;
   justify-content: center;
@@ -80,21 +80,25 @@ nav form {
   border: 0.3px solid #b5b5b5;
 }
 nav form input{
+  height: 20px;
   width: 250px;
-  height: 30px;
+  padding: 10px;
   padding-left: 10px;
   border-radius: 2px;
   border: 0.3px solid #b5b5b5;
+  font-size: 16px;
+  color:#555;
 }
 nav form a {
   height: 20px;
   margin-top: 10px;
   border-radius: 3px;
-  background-color:   #1e8449;
+  background-color:   #3276b1;
   width: 250px;
   border: 0px;
   color: white;
-  padding: 5px;
+  padding: 10px;
+  font-size: 18px;
 }
 label.msg {
   color: red;

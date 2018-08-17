@@ -14,7 +14,7 @@
     </nav>
     <div class="content">
       <div class="options">
-      <p>Add new Resource</p><a>+</a>
+      <p>Add new Resource</p><a href="prueba.com">+</a>
       </div>
       <div class="resource-list">
         <ul>
@@ -24,16 +24,44 @@
         </ul>
       </div>
     </div>
+  <div>
+    <form action="">
+        <h3>Create new Resource</h3>
+        <label>Name:</label>
+        <input type="text" placeholder="Name..." v-model="resourceName">
+        <label>Which fields the model will have?</label>
+        <input type="text" placeholder="Name..." v-model="nameOfParam">
+        <select v-model="type">
+          <option value="Integer">int</option>
+          <option value="Float">float</option>
+          <option value="String">string</option>
+          <option value="Number">number</option>
+        </select>
+        <ul>
+          <li v-for="param in params" :key="param.name">
+            {{ param }}
+          </li>
+        </ul>
+        <a @click="addParam()">Add Param</a>
+        <a @click="createResource()">Create Resource</a>
+        {{ resourceUrl }}
+      </form>
+  </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Resource',
   data () {
     return {
+      url: '',
       username: '',
       search: '',
+      nameOfParam: '',
+      type: '',
       resources: [
         {
           id: 0,
@@ -43,21 +71,46 @@ export default {
           id: 1,
           name: 'mesas'
         }
-      ]
+      ],
+      params: [{
+        name:'', 
+        type:''
+      }],
+      resourceUrl:'',
+      resourceName:'',
     }
   },
   created(){
     this.username = this.$route.params.username;
+    getResourcesByUserName()
   },
   methods: {
     getResourcesByUserName(){
-      axios.get('http://localhost:3333/api/resources/' + this.username).then(res => this.resources = res.data);
+      axios.get(url + this.username).then(res => this.resources = res.data);
     },
     searchByName(){
       const resource = this.resources.find(resource => resource.name === this.search)
       this.resources = [ 
         resource
       ]
+    },
+    getResourceUrl() {
+      axios.get(url).then(res => this.resourceUrl = res.data);
+    },
+    addParam() {
+      this.params.push({name:this.nameOfParam,type: this.type});
+      this.type = '';
+      this.nameOfParam = '';
+    },
+    createResource(){
+      const resource = {
+        username: this.username,
+        resource: {
+          name: this.resourceName,
+          params: this.params
+        }
+      };
+      axios.post(this.url, resource)
     }
   }
 }

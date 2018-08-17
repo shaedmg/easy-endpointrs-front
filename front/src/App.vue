@@ -17,7 +17,7 @@ ul {
   padding: 0px;
 }
 a {
-  color: white;
+  color: black;
   cursor: pointer;
 }
 p {
@@ -28,7 +28,7 @@ h1 {
   color: white
 }
 button{
-  color: white;
+  color: black;
   cursor: pointer;
 }
 #app {
