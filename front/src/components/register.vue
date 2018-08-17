@@ -41,7 +41,7 @@ export default {
     createUser() {
       if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
         if(!this.exists()){
-          axios.post('http://localhost:3333/api/users', {
+          axios.post('http://localhost:4000/api/users', {
             name: this.name,
             username: this.username,
             email: this.email,
@@ -57,7 +57,7 @@ export default {
       }
     },
     exists(){
-      axios.get('http://localhost:3333/api/users').then(res => this.users = res.data);
+      axios.get('http://localhost:4000/api/users').then(res => this.users = res.data);
       const user = this.users.find(user => (user.email === this.email || user.username === this.username));
        if (user != undefined) {
         return true;

@@ -17,8 +17,9 @@ ul {
   padding: 0px;
 }
 a {
-  color: black;
+  color: white;
   cursor: pointer;
+  text-decoration: none;
 }
 p {
   text-align: justify;
@@ -28,7 +29,7 @@ h1 {
   color: white
 }
 button{
-  color: black;
+  color: white;
   cursor: pointer;
 }
 #app {
