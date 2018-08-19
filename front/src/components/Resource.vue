@@ -16,32 +16,41 @@
       <div class="resource-list">
         <ul>
           <h2>Your Resources</h2>
+          <p><a class="add-resource" @click="addResource ()"> Add New Resource </a></p>
           <li v-for="resource in resources" :key="resource.id">
-            <h3>{{resource.name}}</h3><a class="">Edit</a><a class="">Delete</a>
+            <h3>{{resource.resource.name}}</h3><a @click="editResource (resource)">Edit</a><a class="" @click="deleteResource(resource)">Delete</a>
           </li>
         </ul>
+        <!-- me cago en la puta esto es un puto lio -->
         <div class="edit-add-content">
         <form action="">
-          <h3>Create new Resource</h3>
-          <label>Name:</label>
-          <input type="text" placeholder="Name..." v-model="resourceName">
-          <label>New Param</label>
-          <input type="text" placeholder="Name..." v-model="nameOfParam">
-          <select v-model="type">
-              <option value="Integer">int</option>
-              <option value="Float">float</option>
-              <option value="String">string</option>
-              <option value="Number">number</option>
-          </select>
-          <a @click="addParam()">Add Param</a>
+          <h3>{{mode}}</h3>
+          <p>
+            <label>Resource Name:</label>
+            <input type="text" placeholder="Name..." v-model="resourceName">
+          </p>
+          <p>
+            <input type="text" placeholder="Name..." v-model="nameOfParam">
+            <select v-model="type">
+                <option value="Integer">int</option>
+                <option value="Float">float</option>
+                <option value="String">string</option>
+                <option value="Number">number</option>
+            </select>
+            <a @click="addParam()">Add Param</a>
+          </p>
         </form>
-        <ul>
-          <li v-for="param in params" :key="param.name">
-            <h3>{{ param.name }}</h3>
-          </li>
-        </ul>
+        <p>
+          <ul>
+            <li v-for="param in params" :key="param.name">
+              <p>name:{{ param.name }} type: {{ param.type }}</p><a @click="deleteParam(param)">x</a>
+            </li>
+          </ul>
+        </p>
+        <p>
         <a @click="createResource()">Create Resource</a>
         <span>{{ resourceUrl }}</span>
+        </p>
       </div>
       </div>
     </div>
@@ -61,21 +70,40 @@ export default {
       search: '',
       nameOfParam: '',
       type: '',
+      mode: 'Create Resource',
       resources: [
         {
-          id: 0,
-          name: 'libros'
+          username: 'juan',
+          resource: {
+            url: 'http://localhost:4000/api/resources',
+            name: 'libro',
+            params: [
+              {
+                name: '',
+                type: ''
+              }
+            ]
+          }
         },
         {
-          id: 1,
-          name: 'mesas'
+          username: 'antonio',
+          resource: {
+            url: 'http://localhost:4000/api/resources',
+            name: 'user',
+            params: [
+              {
+                name: '',
+                type: ''
+              }
+            ]
+          }
         }
       ],
       params: [{
         name:'hola', 
         type:''
       }],
-      resourceUrl:'http://localhost:4000/api/resources',
+      resourceUrl:'',
       resourceName:'',
     }
   },
@@ -85,7 +113,7 @@ export default {
   },
   methods: {
     getResourcesByUserName(){
-      // axios.get(this.url + this.username).then(res => this.resources = res.data);
+      axios.get(this.url + this.username).then(res => this.resources = res.data);
     },
     searchByName(){
       const resource = this.resources.find(resource => resource.name === this.search)
@@ -94,8 +122,8 @@ export default {
       ]
     },
     getResourceUrl() {
-      // añadir cuando el back devuelva una url
-      // axios.get(this.url).then(res => this.resourceUrl = res.data);
+      const resourceName = this.resourceName
+      this.resourceUrl = 'http://localhost:4000/'+ this.username + '/' + resourceName
     },
     addParam() {
       this.params.push({name:this.nameOfParam,type: this.type});
@@ -106,20 +134,54 @@ export default {
       const resource = {
         username: this.username,
         resource: {
+          url: this.resourceUrl,
           name: this.resourceName,
           params: this.params
         }
       };
       axios.post(this.url, resource)
+      this.getResourceUrl()
+      this.resources.push(resource)
+      this.resourceUrl = '';
+      this.resourceName = '';
+      this.params = [];
+    },
+    deleteResource(resource){
+      const index = this.resources.indexOf(resource)
+      this.resources.splice(index, 1)
+      axios.delete(this.url, resource)
+    },
+    deleteParam(param){
+      const index = this.params.indexOf(param)
+      this.params.splice(index, 1)
+    },
+    editResource (resource){
+      this.resourceUrl = resource.resource.url;
+      this.resourceName = resource.resource.name;
+      this.params = resource.resource.params;
+      this.mode = 'Edit Resource' 
+    },
+    addResource (){
+      this.resourceUrl = '';
+      this.resourceName = '';
+      this.params = [];
+      this.mode = 'Create Resource' 
     }
   }
 }
 </script>
 
 <style scoped>
+.add-resource{
+  padding: 10px;
+  background-color:   #3276b1;
+  border-radius: 3px;
+  text-align: center;
+}
 label{
-  width: 200px;
+  width: 130px;
   text-align: left;
+  color: #3276b1;
 }
 nav ul{
   width: 830px;
@@ -189,7 +251,6 @@ nav {
   height: 450px;
 }
 .edit-add-content span{
-  float: right;
   width: 280px;
   height: 50px;
   border: 1px solid #b5b5b5;
@@ -197,12 +258,36 @@ nav {
   justify-content: center;
   align-items: center;
   border-radius: 3px;
+  float: left;
+  color: #3276b1;
 }
-.edit-add-content a{
-  width: 100px;
+.edit-add-content p a{
+  width: 130px;
+  height: 20px;
   padding: 10px;
   background-color:   #3276b1;
   border-radius: 3px;
+  text-align: center;
+  margin: 10px;
+}
+.edit-add-content ul li a{
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  background-color:   red;
+  border-radius: 3px;
+  text-align: center;
+  float: right;
+  margin: 0px;
+  margin-right: 5px;
+}
+.edit-add-content p {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  color: #3276b1;
 }
 .edit-add-content form a{
   padding: 10px;
@@ -211,20 +296,23 @@ nav {
 }
 .edit-add-content form{
   width: 100%;
-  height: 300px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   align-items: left;
   padding-left: 20px;
 }
 .edit-add-content ul{
-  width: 300px;
-  margin: 10px;
+  width: 100%;
+  margin: 0px;
 }
 .edit-add-content li{
   width: 100px;
   height: 30px;
   margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .edit-add-content li h3{
   widows: 10px;
@@ -247,6 +335,7 @@ nav {
   border: 0.3px solid #b5b5b5;
   font-size: 16px;
   color:#555;
+  margin-left: 10px;
 }
 .options a{
   width: 50px;
