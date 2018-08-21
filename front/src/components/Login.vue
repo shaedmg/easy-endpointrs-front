@@ -31,14 +31,17 @@ export default {
   methods: {
     login() {
       this.state = false;
-      axios.get('http://localhost:4000/api/users').then(res => this.users = res.data);
+      axios.get('http://localhost:4000/api/users').then(res =>{
+      this.users = res.data
       const user = this.users.find(user => (user.email === this.email && user.password === this.password));
       if (user != undefined) {
-        this.$router.replace({ name: 'Resource', params: { username : user.username }});
+        this.$router.push({ name: 'Resource', params: { username : user.username }});
       } else {
         this.msg = 'Username or Password Incorrect'
         this.state = true;
-      }
+      }});
+      
+      
 
     }
   }

@@ -47,7 +47,7 @@ export default {
             email: this.email,
             password: this.password
           });
-          this.$router.replace({ name: 'Login'});
+          this.$router.push({ name: 'Login'});
         }else{
           this.msg = "Email or Username already exists"
         }

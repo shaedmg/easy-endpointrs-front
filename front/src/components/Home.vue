@@ -39,10 +39,10 @@ export default {
   },
   methods: {
     login(){
-      this.$router.replace({ name: 'Login'});
+      this.$router.push({ name: 'Login'});
     },
     register(){
-      this.$router.replace({ name: 'Register'});
+      this.$router.push({ name: 'Register'});
     }
   }
 }
