@@ -4,7 +4,7 @@
       <ul>
         <li class="left">
           <img src="../../build/logo.png" alt="">
-          <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" @keyup.enter="searchByName()">
+          <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
         </li>
         <li class="rigth">
           <p>{{ this.username }}</p>
@@ -17,11 +17,10 @@
         <ul>
           <h2>Your Resources</h2>
           <p><a class="add-resource" @click="addResource ()"> Add New Resource </a></p>
-          <li v-for="resource in resources" :key="resource.id">
-            <h3>{{resource.resource.name}}</h3><a @click="editResource (resource)">Edit</a><a class="" @click="deleteResource(resource)">Delete</a>
+          <li v-for="resource in filterResource" :key="resource.id">
+            <h3>{{resource.name}}</h3><a @click="editResource (resource)">Edit</a><a class="" @click="deleteResource(resource)">Delete</a>
           </li>
         </ul>
-        <!-- me cago en la puta esto es un puto lio -->
         <div class="edit-add-content">
         <form action="">
           <h3>{{mode}}</h3>
@@ -48,9 +47,10 @@
           </ul>
         </p>
         <p>
-        <a @click="createResource()">Create Resource</a>
+        <a @click="createResource()">{{mode}}</a>
         <span>{{ resourceUrl }}</span>
         </p>
+        <label class="msg" v-if="error">{{ msg }}</label>
       </div>
       </div>
     </div>
@@ -67,42 +67,16 @@ export default {
     return {
       url: 'http://localhost:4000/api/resources',
       username: '',
+      msg: '',
+      error: false,
       search: '',
       nameOfParam: '',
       type: '',
+      tempResource: {},
       mode: 'Create Resource',
-      resources: [
-        {
-          username: 'juan',
-          resource: {
-            url: 'http://localhost:4000/api/resources',
-            name: 'libro',
-            params: [
-              {
-                name: '',
-                type: ''
-              }
-            ]
-          }
-        },
-        {
-          username: 'antonio',
-          resource: {
-            url: 'http://localhost:4000/api/resources',
-            name: 'user',
-            params: [
-              {
-                name: '',
-                type: ''
-              }
-            ]
-          }
-        }
-      ],
-      params: [{
-        name:'hola', 
-        type:''
-      }],
+      autenticated : false,
+      resources: [],
+      params: [],
       resourceUrl:'',
       resourceName:'',
     }
@@ -115,12 +89,6 @@ export default {
     getResourcesByUserName(){
       axios.get(this.url + this.username).then(res => this.resources = res.data);
     },
-    searchByName(){
-      const resource = this.resources.find(resource => resource.name === this.search)
-      this.resources = [ 
-        resource
-      ]
-    },
     getResourceUrl() {
       const resourceName = this.resourceName
       this.resourceUrl = 'http://localhost:4000/'+ this.username + '/' + resourceName
@@ -131,20 +99,34 @@ export default {
       this.nameOfParam = '';
     },
     createResource(){
-      const resource = {
-        username: this.username,
-        resource: {
-          url: this.resourceUrl,
-          name: this.resourceName,
-          params: this.params
+      if(this.mode === "Edit Resource"){
+        if(this.tempResource.name != this.resourceName || this.tempResource.params != this.params){
+          const index = this.resources.indexOf(this.tempResource)
+          axios.put(this.url, this.resources[index]).then(res => {
+          this.resources[index] = res.data;
+        }).catch(error => {
+          this.msg = error.toString()
+          this.error = true;
+        })
         }
-      };
-      axios.post(this.url, resource)
-      this.getResourceUrl()
-      this.resources.push(resource)
-      this.resourceUrl = '';
-      this.resourceName = '';
-      this.params = [];
+      }else{
+        if(this.name != '' || !this.params.isEmpty()){
+          const resource = {
+            url: this.resourceUrl,
+            name: this.resourceName,
+            params: this.params
+          }
+          axios.post(this.url, resource).then(
+            res => {
+              this.getResourceUrl()
+              this.resources.push(resource)
+            })
+          .catch(error => {
+            this.msg = error.toString()
+            this.error = true;
+          })
+        }
+      }
     },
     deleteResource(resource){
       const index = this.resources.indexOf(resource)
@@ -156,22 +138,40 @@ export default {
       this.params.splice(index, 1)
     },
     editResource (resource){
-      this.resourceUrl = resource.resource.url;
-      this.resourceName = resource.resource.name;
-      this.params = resource.resource.params;
+      this.tempResource = resource;
+      this.resourceUrl = resource.url;
+      this.resourceName = resource.name;
+      this.params = resource.params;
       this.mode = 'Edit Resource' 
     },
     addResource (){
+      this.tempResource = {};
       this.resourceUrl = '';
       this.resourceName = '';
       this.params = [];
       this.mode = 'Create Resource' 
+    }
+  },
+  computed: {
+    filterResource: function() {
+      return this.resources.filter(resource => {
+          return resource.name.match(this.search)
+        })
     }
   }
 }
 </script>
 
 <style scoped>
+label.msg {
+  width: 100%;
+  color: red;
+  border: 1px solid red;
+  display: flex;
+  padding: 5px;
+  background-color:  #fdedec;
+  justify-content: center;
+}
 .add-resource{
   padding: 10px;
   background-color:   #3276b1;
