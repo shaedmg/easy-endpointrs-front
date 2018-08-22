@@ -65,7 +65,7 @@ export default {
   name: 'Resource',
   data () {
     return {
-      url: 'http://localhost:4000/api/resources',
+      url: 'http://localhost:5000/api/resources',
       username: '',
       msg: '',
       error: false,
@@ -83,11 +83,11 @@ export default {
   },
   created(){
     this.username = this.$route.params.username;
-    //  this.getResourcesByUserName()
+    this.getResources()
   },
   methods: {
-    getResourcesByUserName(){
-      axios.get(this.url + this.username).then(res => this.resources = res.data);
+    getResources(){
+      axios.get(this.url).then(res => this.resources = res.data);
     },
     getResourceUrl() {
       const resourceName = this.resourceName
@@ -131,7 +131,7 @@ export default {
     deleteResource(resource){
       const index = this.resources.indexOf(resource)
       this.resources.splice(index, 1)
-      axios.delete(this.url, resource)
+      axios.delete(this.url+`/${resource.name}`, resource)
     },
     deleteParam(param){
       const index = this.params.indexOf(param)

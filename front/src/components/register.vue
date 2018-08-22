@@ -46,6 +46,14 @@ export default {
             username: this.username,
             email: this.email,
             password: this.password
+          })
+          .then((response) => {
+            response.data.backend = 'http://localhost:5000'
+            axios.get(`${response.data.backend}/api/resources/newProject`)
+            .then(()=>{
+              axios.get(`${response.data.backend}/api/resources/startAPI`)
+            })
+            console.log(response.data);
           });
           this.$router.push({ name: 'Login'});
         }else{
