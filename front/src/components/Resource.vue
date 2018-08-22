@@ -26,7 +26,7 @@
           <h3>{{mode}}</h3>
           <p>
             <label>Resource Name:</label>
-            <input type="text" placeholder="Name..." v-model="resourceName">
+            <input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'">
           </p>
           <p>
             <input type="text" placeholder="Name..." v-model="nameOfParam">
@@ -35,14 +35,22 @@
                 <option value="Float">float</option>
                 <option value="String">string</option>
                 <option value="Number">number</option>
+                <option value="Number">boolean</option>
             </select>
             <a @click="addParam()">Add Param</a>
           </p>
+          <p class="separation">
+            <input class="checkbox" type="checkbox" v-model="required">
+            <label class="checkbox">required</label>
+            <input class="checkbox" type="checkbox" v-model="unique">
+            <label class="checkbox">unique</label>
+          </p>
         </form>
+        <p></p>
         <p>
           <ul>
             <li v-for="param in params" :key="param.name">
-              <p>name:{{ param.name }} type: {{ param.type }}</p><a @click="deleteParam(param)">x</a>
+              <p class="param-options">Name : {{ param.name }} Type : {{param.type}}</p><h6>{{ param.required}}</h6> <h6 class="lila">{{param.unique}}</h6> <a @click="deleteParam(param)">x</a>
             </li>
           </ul>
         </p>
@@ -72,6 +80,8 @@ export default {
       search: '',
       nameOfParam: '',
       type: '',
+      required: false,
+      unique: false,
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
@@ -81,7 +91,9 @@ export default {
         params: [
           {
             name: 'tu',
-            type: 'culo'
+            type: 'culo',
+            required: false,
+            unique: true
           }
         ]
       }],
@@ -100,28 +112,32 @@ export default {
     },
     getResourceUrl() {
       const resourceName = this.resourceName
-      this.resourceUrl = 'http://localhost:5000/'+'api/' + resourceName
+      this.resourceUrl = 'http://localhost:5000/'+ resourceName
     },
     addParam() {
-      this.params.push({name:this.nameOfParam,type: this.type});
-      this.type = '';
-      this.nameOfParam = '';
+      if(this.nameOfParam != '' && this.type != ''){
+        this.params.push({name:this.nameOfParam,type: this.type, required: this.required, unique: this.unique});
+        this.type = '';
+        this.nameOfParam = '';
+        this.unique = false;
+        this.required = false;
+      }
     },
     createResource(){
       if(this.mode === "Edit Resource"){
-        console.log(this.tempResource.params)
-        if(this.tempResource.name != this.resourceName || this.tempResource != this.params){
+        if(this.tempResource.params.length != this.params.length){
           const index = this.resources.indexOf(this.tempResource)
-          console.log(`haciendo put`)
           axios.put(this.url, this.resources[index]).then(res => {
-          this.resources[index] = res.data;
-        }).catch(error => {
-          this.msg = error.toString()
-          this.error = true;
-        })
+            this.resources[index] = res.data;
+            this.msg = '';
+            this.error = false;
+          }).catch(error => {
+            this.msg = error.toString()
+            this.error = true;
+          })
         }
       }else{
-        if(this.name != '' || !this.params.isEmpty()){
+        if(this.resourceName != '' && this.params.length != 0 ){
           this.getResourceUrl()
           const resource = {
             url: this.resourceUrl,
@@ -131,11 +147,17 @@ export default {
           axios.post(this.url, resource).then(
             res => {
               this.resources.push(resource)
-            })
+              this.msg = '';
+              this.error = false;
+          })
           .catch(error => {
+            this.resourceUrl = '';
             this.msg = error.toString()
             this.error = true;
           })
+        }else{
+          this.error = true;
+          this.msg = 'Resource must have params and name can not be empty'
         }
       }
     },
@@ -149,6 +171,8 @@ export default {
         this.params.splice(index, 1)
     },
     editResource (resource){
+      this.msg = '';
+      this.error = false;
       this.tempResource = Object.assign({}, resource)
       this.tempResource.params = resource.params.slice()
       this.resourceUrl = resource.url.toString();
@@ -157,6 +181,8 @@ export default {
       this.mode = 'Edit Resource' 
     },
     addResource (){
+      this.msg = '';
+      this.error = false;
       this.tempResource = {};
       this.resourceUrl = '';
       this.resourceName = '';
@@ -175,6 +201,25 @@ export default {
 </script>
 
 <style scoped>
+h6 {
+  background-color: #31B404;
+  width: 30px;
+  height: 20px;
+  padding: 5px 9px 5px 9px;
+  border-radius: 3px;
+  margin: 0px;
+  margin-right: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+h6.lila{
+ background-color: #B404AE
+}
+.content .resource-list p.separation{
+  margin-top: 0px;
+}
 label.msg {
   width: 100%;
   color: red;
@@ -283,7 +328,7 @@ nav {
   margin: 10px;
 }
 .edit-add-content ul li a{
-  width: 20px;
+  width: 35px;
   height: 20px;
   padding: 5px;
   background-color:   red;
@@ -301,6 +346,11 @@ nav {
   margin: 10px;
   color: #3276b1;
 }
+.edit-add-content p.param-options {
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
 .edit-add-content form a{
   padding: 10px;
   background-color:   #3276b1;
@@ -308,11 +358,14 @@ nav {
 }
 .edit-add-content form{
   width: 100%;
-  height: 180px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   align-items: left;
   padding-left: 20px;
+}
+.edit-add-content form .checkbox{
+  width: 60px;
 }
 .edit-add-content ul{
   width: 100%;
