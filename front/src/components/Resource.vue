@@ -65,7 +65,7 @@ export default {
   name: 'Resource',
   data () {
     return {
-      url: 'http://localhost:4000/api/resources',
+      url: 'http://localhost:5000/api/resources',
       username: '',
       msg: '',
       error: false,
