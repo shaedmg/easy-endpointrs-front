@@ -75,7 +75,16 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [],
+      resources: [{
+        name: 'culo',
+        url: 'ffifesifgiuegfyegifug',
+        params: [
+          {
+            name: 'tu',
+            type: 'culo'
+          }
+        ]
+      }],
       params: [],
       resourceUrl:'',
       resourceName:'',
@@ -83,15 +92,15 @@ export default {
   },
   created(){
     this.username = this.$route.params.username;
-    //  this.getResourcesByUserName()
+    this.getResources()
   },
   methods: {
-    getResourcesByUserName(){
-      axios.get(this.url + this.username).then(res => this.resources = res.data);
+    getResources(){
+      axios.get(this.url).then(res => this.resources = res.data);
     },
     getResourceUrl() {
       const resourceName = this.resourceName
-      this.resourceUrl = 'http://localhost:4000/'+ this.username + '/' + resourceName
+      this.resourceUrl = 'http://localhost:5000/'+'api/' + resourceName
     },
     addParam() {
       this.params.push({name:this.nameOfParam,type: this.type});
@@ -100,8 +109,10 @@ export default {
     },
     createResource(){
       if(this.mode === "Edit Resource"){
-        if(this.tempResource.name != this.resourceName || this.tempResource.params != this.params){
+        console.log(this.tempResource.params)
+        if(this.tempResource.name != this.resourceName || this.tempResource != this.params){
           const index = this.resources.indexOf(this.tempResource)
+          console.log(`haciendo put`)
           axios.put(this.url, this.resources[index]).then(res => {
           this.resources[index] = res.data;
         }).catch(error => {
@@ -111,6 +122,7 @@ export default {
         }
       }else{
         if(this.name != '' || !this.params.isEmpty()){
+          this.getResourceUrl()
           const resource = {
             url: this.resourceUrl,
             name: this.resourceName,
@@ -118,7 +130,6 @@ export default {
           }
           axios.post(this.url, resource).then(
             res => {
-              this.getResourceUrl()
               this.resources.push(resource)
             })
           .catch(error => {
@@ -131,17 +142,18 @@ export default {
     deleteResource(resource){
       const index = this.resources.indexOf(resource)
       this.resources.splice(index, 1)
-      axios.delete(this.url, resource)
+      axios.delete(this.url + '/' + resource.name)
     },
     deleteParam(param){
-      const index = this.params.indexOf(param)
-      this.params.splice(index, 1)
+        const index = this.params.indexOf(param)
+        this.params.splice(index, 1)
     },
     editResource (resource){
-      this.tempResource = resource;
-      this.resourceUrl = resource.url;
-      this.resourceName = resource.name;
-      this.params = resource.params;
+      this.tempResource = Object.assign({}, resource)
+      this.tempResource.params = resource.params.slice()
+      this.resourceUrl = resource.url.toString();
+      this.resourceName = resource.name.toString();
+      this.params = resource.params.slice();
       this.mode = 'Edit Resource' 
     },
     addResource (){

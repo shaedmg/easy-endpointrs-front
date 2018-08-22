@@ -3,7 +3,7 @@
     <nav>
       <form action="">
         <h3>EasyEndPoints</h3>
-        <input type="email" placeholder="Email..." id="email_field" v-model="email"/>
+        <input type="text" placeholder="Email..." id="email_field" v-model="email"/>
         <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
         <a @click="login()">Sign In</a>
@@ -37,12 +37,9 @@ export default {
       if (user != undefined) {
         this.$router.push({ name: 'Resource', params: { username : user.username }});
       } else {
-        this.msg = 'Username or Password Incorrect'
+        this.msg = 'Email or Password Incorrect'
         this.state = true;
       }});
-      
-      
-
     }
   }
 }
