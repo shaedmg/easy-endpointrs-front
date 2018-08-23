@@ -116,11 +116,13 @@ export default {
     },
     addParam() {
       if(this.nameOfParam != '' && this.type != ''){
-        this.params.push({
-        name:this.nameOfParam,
-        model: { [this.nameOfParam.toString()]:{ type: this.type, required: this.required, unique: this.unique } }
+          this.params.push({
+          name: this.nameOfParam,
+          model: `${[this.nameOfParam.toString()]}:{ type: this.type, required: this.required, unique: this.unique }`,
+          type: this.type, 
+          required: this.required,
+          unique: this.unique
         });
-        
         this.type = '';
         this.nameOfParam = '';
         this.unique = false;
