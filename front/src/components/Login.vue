@@ -3,14 +3,19 @@
     <nav>
       <form action="">
         <h3>EasyEndPoints</h3>
+        <label >Email</label>
         <input type="text" placeholder="Email..." id="email_field" v-model="email"/>
+        <label >Password</label>
         <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
         <a @click="login()">Sign In</a>
       </form>  
     </nav>
+    <div class="footer">
+
+    </div>
   </div>
-  
+
 </template>
 
 <script>
@@ -47,28 +52,34 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.footer {
+  background-color: black;
+  height: 59px;
+}
 h3 {
   width: 100%;
   padding-bottom: 10px;
   margin: 0px;
   padding: 0px;
   margin-bottom: 20px;
+  color: white;
 }
 label {
-  width: 260px;
+  width: 270px;
   display: flex;
   text-align: left;
   margin-top: 10px;
   font-size: 15px;
+  color: white;
 }
 nav {
   width: 100%;
-  height: 800px;
+  height: 900px;
   /*IMPORTANTE*/
   display: flex;
   justify-content: center;
   align-items: center;
+  background-image: url('../../build/fondo.png');
 }
 nav form {
   width: 300px;
@@ -77,7 +88,6 @@ nav form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 0.3px solid #b5b5b5;
 }
 nav form input{
   height: 20px;
@@ -91,7 +101,7 @@ nav form input{
 }
 nav form a {
   height: 20px;
-  margin-top: 10px;
+  margin-top: 20px;
   border-radius: 3px;
   background-color:   #3276b1;
   width: 250px;
@@ -99,6 +109,9 @@ nav form a {
   color: white;
   padding: 10px;
   font-size: 18px;
+  -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+  -moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+  box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
 }
 label.msg {
   color: red;

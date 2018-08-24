@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="resource">
     <nav>
       <ul>
         <li class="left">
-          <img src="../../build/logo.png" alt="">
+          <img src="../../build/logo1.png" alt="">
           <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
         </li>
         <li class="rigth">
@@ -248,7 +248,7 @@ label{
   color: #3276b1;
 }
 nav ul{
-  width: 830px;
+  width: 100%;
   margin: 0 auto;
 }
 nav {
@@ -258,9 +258,9 @@ nav {
 }
 .rigth{
   float: right;
-  width: 250px;
+  width: 100px;
   height: 60px;
-  margin-right: 20px;
+  margin-right: 80px;
   display: flex;
   justify-content: right;
   align-items: center;
@@ -278,7 +278,7 @@ nav {
 }
 .left {
   float: left;
-  margin-left: 20px;
+  margin-left: 80px;
   width: 500px;
   height: 60px;
   display: flex;
@@ -286,8 +286,8 @@ nav {
   align-items: center;
 }
 .left img{
-  width: 130px;
-  height: 30px;
+  width: 150px;
+  height: 40px;
 }
 .left input {
   width: 300px;

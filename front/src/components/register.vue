@@ -17,6 +17,9 @@
         <a @click="createUser()">Register</a>
       </form>
     </nav>
+    <div class="footer">
+
+    </div>
   </div>
 </template>
 
@@ -92,11 +95,16 @@ function checkPasswordConfirmed(password, passwordConfirmed) {
 </script>
 
 <style scoped>
+.footer {
+  background-color: black;
+  height: 59px;
+}
 h3 {
   width: 100%;
   padding-bottom: 10px;
   margin: 0px;
   padding: 0px;
+  color: white;
 }
 label {
   width: 260px;
@@ -104,14 +112,16 @@ label {
   text-align: left;
   margin-top: 10px;
   font-size: 15px;
+  color: white;
 }
 nav {
   width: 100%;
-  height: 1000px;
+  height: 900px;
   /*IMPORTANTE*/
   display: flex;
   justify-content: center;
   align-items: center;
+  background-image: url('../../build/fondo.png');
 }
 nav form {
   width: 300px;
@@ -120,7 +130,6 @@ nav form {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 0.3px solid #b5b5b5;
 }
 nav form input{
   width: 250px;
@@ -131,13 +140,16 @@ nav form input{
 }
 nav form a {
   height: 20px;
-  margin-top: 10px;
+  margin-top: 30px;
   border-radius: 3px;
-  background-color:   #1e8449;
+  background-color:   #3276b1;
   width: 250px;
   border: 0px;
   color: white;
-  padding: 5px;
+  padding: 10px;
+  -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+  -moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+  box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
 }
 label.msg {
   color: red;

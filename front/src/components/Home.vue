@@ -14,23 +14,18 @@
       <div class="header">
         <ul>
           <li class="left">        
-            <h1>EasyEndPoints</h1>
+            <h1>EasyEndPoint</h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              Quos reiciendis eius totam voluptatum ad hic dolorem magnam, 
-              eligendi debitis ipsum neque ipsa dicta explicabo similique animi? 
-              Minima eum asperiores deserunt.
+              Quos reiciendis eius totam 
             </p>
-            <a @click="login()">Try now for free</a>
-          </li>
-          <li class="rigth">
-            <img src="../../build/logo.jpg" alt="">
+            <a @click="register()">Try now for free</a>
           </li>
         </ul>
       </div>
       <div class="info">
         <ul>
           <li>
-            <img src="https://png.icons8.com/color/1600/forgot-password.png" alt="">
+            <img src="https://www.freeiconspng.com/uploads/login-key-icon-lock-locked-login-15.png" alt="">
             <p>Easy login and access
             </p>
           </li>
@@ -41,10 +36,13 @@
           </li>
           <li>
             <img src="http://cdn.onlinewebfonts.com/svg/img_178343.png" alt="">
-            <p>instan owned API
+            <p>instant owned API
             </p>
           </li>
         </ul>
+      </div>
+      <div class="footer">
+
       </div>
   </div>
 </template>
@@ -69,10 +67,19 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.footer {
+  background-color: black;
+  height: 59px;
+  margin-top: 120px;
+}
+.home {
+  background-image: url('../../build/fondo.png');
+  width: 100%;
+  height: 900px;
+}
 .info {
   width: 100%;
   height: 300px;
-  background-color: white;
   display: flex;
   align-items: center;
 }
@@ -85,7 +92,7 @@ export default {
   align-items: center;
 }
 .info li {
-  width: 200px;
+  width: 240px;
   height: 100%;
   margin: 40px;
   margin-top:10px;
@@ -99,17 +106,17 @@ export default {
   height: 100px;
 }
 .info li p{
-  color: gray;
+  color: white;
   text-align: inherit;
   height: 50px;
 }
 nav {
-  background-color: #3276b1;
   height: 50px;
   width: 100%;
+  padding-top: 30px;
 }
 nav ul{
-  width: 830px;
+  width: 100%;
   margin: 0 auto;
 }
 nav spam{
@@ -117,9 +124,9 @@ nav spam{
   margin-left: 10px;
 }
 img.logo {
-  width: 130px;
-  height: 30px;
-  margin-top: 10px;
+  width: 150px;
+  height: 40px;
+  margin-left: 40px;
 }
 nav li {
   width: 150px;
@@ -127,6 +134,7 @@ nav li {
   display: flex;
   align-items: center;
   float: right;
+  margin-right: 40px;
 }
 nav li a {
     color: white;
@@ -135,31 +143,37 @@ nav li a {
 .header {
   width: 100%;
   height: 400px;
-  background-color: white;
   display: flex;
   align-items: center;
-  background-image: url('https://i.pinimg.com/originals/ab/18/36/ab1836654051b0500f4d708d83bcd35c.jpg')
 }
 .header ul {
-  width: 830px;
-  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .header a {
   background-color:   #3276b1;
-  width: 130px;
-  padding: 10px;
+  width: 140px;
+  padding: 20px;
   border-radius: 5px;
+  font-size: 20px;
+  -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+-moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
 }
 .header a:hover {
-  background-color:#145a32;
+  background-color:#084B8A;
 }
 .header p {
-  width: 300px;
+  width: 500px;
+  font-size: 20px;
 }
 .header h1 {
   width: 300px;
   margin: 0px;
   text-align: left;
+  font-size: 100px;
 }
 .header img {
   width: 500px;
@@ -167,40 +181,19 @@ nav li a {
   margin: 0px;
   border-radius: 5px;
   background-color: red;
+  display: none;
 }
 .left {
-  width: 300px;
+  width: 720px;
   height: 400px;
   display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: center;
-  float: left;
-}
-.rigth {
-  width: 500px;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  float: right;
-  margin-left: 30px;
 }
 @media only screen and (max-width: 820px) {
-  .left {
-    display: none;
-  }
-  .rigth {
-    margin: 5px;
-    float: center;
-  }
-  .header ul {
-  display: flex;
-  justify-content: center;
-  }
   nav ul{
-  width: 100%;
+    width: 100%;
   }
 }
 </style>
