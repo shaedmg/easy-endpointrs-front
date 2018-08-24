@@ -112,7 +112,7 @@ export default {
     },
     getResourceUrl() {
       const resourceName = this.resourceName
-      this.resourceUrl = 'http://localhost:5000/'+ resourceName
+      this.resourceUrl = 'http://localhost:9000/'+ resourceName
     },
     addParam() {
       if(this.nameOfParam != '' && this.type != ''){
@@ -132,9 +132,12 @@ export default {
     createResource(){
       if(this.mode === "Edit Resource"){
         if(this.tempResource.params.length != this.params.length){
-          const index = this.resources.indexOf(this.tempResource)
-          axios.put(this.url, this.resources[index]).then(res => {
-            this.resources[index] = res.data;
+          const resource = {
+            url: this.resourceUrl,
+            name: this.resourceName,
+            params: this.params
+          }
+          axios.put(this.url+ '/' + this.resourceName, resource).then(res => {
             this.msg = '';
             this.error = false;
           }).catch(error => {
