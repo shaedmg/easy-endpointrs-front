@@ -27,6 +27,25 @@
           </li>
         </ul>
       </div>
+      <div class="info">
+        <ul>
+          <li>
+            <img src="https://png.icons8.com/color/1600/forgot-password.png" alt="">
+            <p>Easy login and access
+            </p>
+          </li>
+          <li>
+            <img src="https://www.health-opportunities.org.uk/wp-content/uploads/2016/03/resources-icon.png" alt="">
+            <p>Create Resources in Seconds
+            </p>
+          </li>
+          <li>
+            <img src="http://cdn.onlinewebfonts.com/svg/img_178343.png" alt="">
+            <p>instan owned API
+            </p>
+          </li>
+        </ul>
+      </div>
   </div>
 </template>
 
@@ -50,8 +69,42 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.info {
+  width: 100%;
+  height: 300px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+.info ul {
+  width: 1000px;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.info li {
+  width: 200px;
+  height: 100%;
+  margin: 40px;
+  margin-top:10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.info li img{
+  width: 100px;
+  height: 100px;
+}
+.info li p{
+  color: gray;
+  text-align: inherit;
+  height: 50px;
+}
 nav {
-  background-color: #e74c3c;
+  background-color: #3276b1;
   height: 50px;
   width: 100%;
 }
@@ -82,16 +135,17 @@ nav li a {
 .header {
   width: 100%;
   height: 400px;
-  background-color: #e74c3c;
+  background-color: white;
   display: flex;
   align-items: center;
+  background-image: url('https://i.pinimg.com/originals/ab/18/36/ab1836654051b0500f4d708d83bcd35c.jpg')
 }
 .header ul {
   width: 830px;
   margin: 0 auto;
 }
 .header a {
-  background-color:   #1e8449;
+  background-color:   #3276b1;
   width: 130px;
   padding: 10px;
   border-radius: 5px;

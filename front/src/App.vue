@@ -11,6 +11,10 @@ export default {
 </script>
 
 <style>
+ @font-face {
+    font-family: Lato;
+    src: url('https://fonts.googleapis.com/css?family=Lato:400,700,900'),
+}
 ul {
   list-style: none;
   margin: 0px;
@@ -42,5 +46,9 @@ button{
 }
 body {
   margin: 0px;
+}
+* {
+  font-weight: 400;
+  font-family: 'Lato', sans-serif;
 }
 </style>
