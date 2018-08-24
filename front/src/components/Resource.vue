@@ -31,11 +31,9 @@
           <p>
             <input type="text" placeholder="Name..." v-model="nameOfParam">
             <select v-model="type">
-                <option value="Integer">int</option>
-                <option value="Float">float</option>
-                <option value="String">string</option>
-                <option value="Number">number</option>
-                <option value="Number">boolean</option>
+                <option value="String">String</option>
+                <option value="Number">Number</option>
+                <option value="Boolean">Boolean</option>
             </select>
             <a @click="addParam()">Add Param</a>
           </p>
