@@ -4,7 +4,7 @@
       <form action="">
         <h3>EasyEndPoints</h3>
         <label >Email</label>
-        <input type="text" placeholder="Email..." id="email_field" v-model="email"/>
+        <input type="text" placeholder="Email..." id="email_field" v-model="username"/>
         <label >Password</label>
         <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
@@ -34,17 +34,28 @@ export default {
     }
   },
   methods: {
-    login() {
-      this.state = false;
-      axios.get('http://localhost:4000/api/users').then(res =>{
-      this.users = res.data
-      const user = this.users.find(user => (user.email === this.email && user.password === this.password));
-      if (user != undefined) {
-        this.$router.push({ name: 'Resource', params: { username : user.username }});
-      } else {
-        this.msg = 'Email or Password Incorrect'
-        this.state = true;
-      }});
+    async login() {
+      await this.getToken();
+      this.sendData();
+    },
+    getToken(){
+      return new Promise((resolve, reject) => {
+        axios.post('http://localhost:4000/signin', {
+            username: this.username,
+            password: this.password
+        }).then(function(res){
+          console.log(res.data);
+          localStorage.setItem("token", res.data);
+          resolve();
+        });
+      })
+      
+    },
+    sendData() {
+      localStorage.setItem("username", this.username);
+      if(localStorage.token != undefined){
+        this.$router.push({ name: 'Resource', params: { username : this.username }});
+      }
     }
   }
 }

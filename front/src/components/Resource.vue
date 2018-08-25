@@ -101,12 +101,16 @@ export default {
     }
   },
   created(){
-    this.username = this.$route.params.username;
-    this.getResources()
+    if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
+      this.username = this.$route.params.username;
+      this.getResources()
+    } else {
+      this.$router.push({ name: 'Login'});
+    }
   },
   methods: {
     getResources(){
-      axios.get(this.url).then(res => this.resources = res.data);
+      axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => this.resources = res.data);
     },
     getResourceUrl() {
       const resourceName = this.resourceName
