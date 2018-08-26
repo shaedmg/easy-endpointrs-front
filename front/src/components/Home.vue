@@ -2,9 +2,9 @@
   <div class="home">
       <nav>
         <ul>
-          <spam>
+          <span>
             <img class="logo" src="../../build/logo.png" alt="">
-          </spam>
+          </span>
           <li>
             <a @click="login()">Sign In /</a>
             <a @click="register()">Register</a>
@@ -119,7 +119,7 @@ nav ul{
   width: 100%;
   margin: 0 auto;
 }
-nav spam{
+nav span{
   float: left;
   margin-left: 10px;
 }

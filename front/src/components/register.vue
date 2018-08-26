@@ -52,9 +52,9 @@ export default {
           })
           .then((response) => {
             response.data.backend = 'http://localhost:5000'
-            axios.get(`${response.data.backend}/api/resources/newProject`)
+            axios.get(`${response.data.backend}/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
             .then(()=>{
-              axios.get(`${response.data.backend}/api/resources/startAPI`)
+              axios.get(`${response.data.backend}/api/resources/startAPI`, {headers: { Authorization: localStorage.token}})
             })
             console.log(response.data);
           });
