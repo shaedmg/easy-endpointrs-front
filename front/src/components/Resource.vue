@@ -139,7 +139,7 @@ export default {
             name: this.resourceName,
             params: this.params
           }
-          axios.put(this.url+ '/' + this.resourceName, resource).then(res => {
+          axios.put(this.url+ '/' + this.resourceName, resource, {headers: { Authorization: localStorage.token}}).then(res => {
             this.msg = '';
             this.error = false;
           }).catch(error => {
@@ -155,7 +155,7 @@ export default {
             name: this.resourceName,
             params: this.params
           }
-          axios.post(this.url, resource).then(
+          axios.post(this.url, resource, {headers: { Authorization: localStorage.token}}).then(
             res => {
               this.resources.push(resource)
               this.msg = '';
@@ -175,7 +175,7 @@ export default {
     deleteResource(resource){
       const index = this.resources.indexOf(resource)
       this.resources.splice(index, 1)
-      axios.delete(this.url + '/' + resource.name)
+      axios.delete(this.url + '/' + resource.name, {headers: { Authorization: localStorage.token}})
     },
     deleteParam(param){
         const index = this.params.indexOf(param)
