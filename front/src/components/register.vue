@@ -51,10 +51,10 @@ export default {
             password: this.password
           })
           .then((response) => {
-            response.data.backend = 'http://localhost:5000'
-            axios.get(`${response.data.backend}/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
+            localStorage.setItem("token", response.data);
+            axios.get(`http://localhost:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
             .then(()=>{
-              axios.get(`${response.data.backend}/api/resources/startAPI`, {headers: { Authorization: localStorage.token}})
+              axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}})
             })
             console.log(response.data);
           });
