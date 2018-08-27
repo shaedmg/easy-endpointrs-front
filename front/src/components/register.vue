@@ -54,11 +54,17 @@ export default {
             localStorage.setItem("token", response.data);
             axios.get(`http://localhost:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
             .then(()=>{
-              axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}})
+              if(response.data[0] != undefined){
+                axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
+                  this.$router.push({ name: 'Login'});
+                })
+              }else{
+                for(let i = 0 ; i < data.length; i++){
+                  this.msg = this.msg + data[i] + " "
+                }
+              }
             })
-            console.log(response.data);
           });
-          this.$router.push({ name: 'Login'});
         }else{
           this.msg = "Email or Username already exists"
         }

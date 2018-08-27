@@ -48,7 +48,7 @@
         <p>
           <ul>
             <li v-for="param in params" :key="param.name">
-              <p class="param-options">Name : {{ param.name }} Type : {{param.type}}</p><h6>{{ param.required}}</h6> <h6 class="lila">{{param.unique}}</h6> <a @click="deleteParam(param)">x</a>
+              <p class="param-options">Name : {{ param.name }} Type : {{param.type}}</p><h6>{{param.required}}</h6> <h6 class="lila">{{param.unique}}</h6> <a @click="deleteParam(param)">x</a>
             </li>
           </ul>
         </p>
@@ -58,6 +58,7 @@
         </p>
         <p><span @click="downloadAPI()"> Descargar API </span></p>
         <label class="msg" v-if="error">{{ msg }}</label>
+        <label class="msg-s" v-if="good">{{ msg }}</label>
       </div>
       </div>
     </div>
@@ -76,6 +77,7 @@ export default {
       username: '',
       msg: '',
       error: false,
+      good: false,
       search: '',
       nameOfParam: '',
       type: '',
@@ -102,12 +104,14 @@ export default {
     }
   },
   created(){
+    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
+    */
   },
   methods: {
     getResources(){
@@ -141,9 +145,11 @@ export default {
             params: this.params
           }
           axios.put(this.url+ '/' + this.resourceName, resource, {headers: { Authorization: localStorage.token}}).then(res => {
-            this.msg = '';
+            this.good = true;
+            this.msg = 'Recurso editado correctamente';
             this.error = false;
           }).catch(error => {
+            this.good = false;
             this.msg = error.toString()
             this.error = true;
           })
@@ -152,22 +158,25 @@ export default {
         if(this.resourceName != '' && this.params.length != 0 ){
           this.getResourceUrl()
           const resource = {
-            url: this.resourceUrl,
-            name: this.resourceName,
-            params: this.params
+            url: this.resourceUrl.toString(),
+            name: this.resourceName.toString(),
+            params: this.params.slice()
           }
           axios.post(this.url, resource, {headers: { Authorization: localStorage.token}}).then(
             res => {
               this.resources.push(resource)
-              this.msg = '';
+              this.good = true;
+              this.msg = 'Recurso creado correctamente';
               this.error = false;
           })
           .catch(error => {
             this.resourceUrl = '';
+            this.good = false;
             this.msg = error.toString()
             this.error = true;
           })
         }else{
+          this.good = false;
           this.error = true;
           this.msg = 'Resource must have params and name can not be empty'
         }
@@ -184,16 +193,19 @@ export default {
     },
     editResource (resource){
       this.msg = '';
+      this.good = false;
       this.error = false;
       this.tempResource = Object.assign({}, resource)
       this.tempResource.params = resource.params.slice()
       this.resourceUrl = resource.url.toString();
       this.resourceName = resource.name.toString();
       this.params = resource.params.slice();
+      console.log(this.params)
       this.mode = 'Edit Resource' 
     },
     addResource (){
       this.msg = '';
+      this.good = false;
       this.error = false;
       this.tempResource = {};
       this.resourceUrl = '';
@@ -215,6 +227,12 @@ export default {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link)
+          this.good = true;
+          this.msg = 'downloaded successfully'
+      }).catch( error => {
+          this.good = false;
+          this.error = true;
+          this.msg = error
       });
     }
   },
@@ -255,6 +273,15 @@ label.msg {
   display: flex;
   padding: 5px;
   background-color:  #fdedec;
+  justify-content: center;
+}
+label.msg-s {
+  width: 100%;
+  color: rgb(2, 122, 2);
+  border: 1px solid green;
+  display: flex;
+  padding: 5px;
+  background-color:  #62ff9e;
   justify-content: center;
 }
 .add-resource{
