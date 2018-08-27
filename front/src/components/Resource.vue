@@ -3,8 +3,17 @@
     <nav>
       <ul>
         <li class="left">
-          <img src="../../build/logo1.png" alt="">
+          <img src="../../build/logo1.png" alt="" @click="redirectToHome()">
           <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
+        </li>
+        <li class="left menu">
+          <a @click="downloadAPI()" :disabled="downloading" >Download API</a>
+          <span class="msg-s" v-if="downloadgood">
+            {{ downloadMsg }}
+          </span>
+          <span class="msg" v-if="downloadError">
+            {{ downloadMsg }}
+          </span>
         </li>
         <li class="rigth">
           <p>{{ this.username }}</p>
@@ -12,6 +21,75 @@
         </li>
       </ul>
     </nav>
+    <div class="content">
+      <div class="resources-list">
+        <h1>Your Resources</h1>
+        <a @click="addResource ()" >Create Resource</a>
+        <ul>
+          <li v-for="resource in filterResource" :key="resource.id">
+            <span class="justify-left">
+              <h2>{{resource.name}}</h2>
+            </span>
+            <span>
+              <ul>
+                <li v-for="petition in resource.petitions" :key="petition.id">{{petition}}</li>
+              </ul>
+            </span>
+            <span class="justify-right">
+              <a class="param" @click="editResource(resource)">Edit</a>
+              <a class="red param" @click="deleteResource(resource)">Delete</a>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="control-panel">
+        <h2>{{mode}}</h2>
+        <span class="name-box">
+          <label>Resource Name:<input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'"></label>
+        </span>
+        <span class="petitions-box">
+          <label>GET <input type="checkbox" v-model="get"></label>
+          <label>PUT <input type="checkbox" v-model="put"></label>
+          <label>POST<input type="checkbox" v-model="post"></label>
+        </span>
+        <span class="param-box">
+          <h3>Add Param</h3>
+          <label>Name: </label><input type="text" placeholder="Name..." v-model="nameOfParam">
+          <label>Type: </label>
+          <select v-model="type">
+                <option value="String">String</option>
+                <option value="Number">Number</option>
+                <option value="Boolean">Boolean</option>
+          </select>
+          <span class="checkbox-box">
+            <label>Required&nbsp; <input type="checkbox" v-model="required"></label>
+            <label>Unique&nbsp;&nbsp;&nbsp;&nbsp;   <input type="checkbox" v-model="unique"></label>
+          </span>
+          <a @click="addParam()">Add Param</a>
+        </span>
+        <span class="param-list-box">
+          <span>
+            <label>Name</label><label>&nbsp;Type</label><label>&nbsp;&nbsp;Required</label><label>Unique</label>
+          </span>
+          <ul>
+            <li v-for="param in params" :key="param.name">
+              <span class="">{{ param.name }}</span>
+              <span>{{param.type}}</span>
+              <span>{{param.required}}</span>
+              <span>{{param.unique}}</span>
+              <span class="justify-right"><a @click="deleteParam(param)">Delete</a></span>
+            </li>
+          </ul>
+        </span>
+        <span class="finish-all-box">
+          <a @click="createResource()">{{mode}}</a>
+          <div>{{ resourceUrl }}</div>
+        </span>
+        <label class="msg" v-if="error"> {{ msg }}</label>
+        <label class="msg-s" v-if="good">{{ msg }}</label>
+      </div>
+    </div>
+    <!--
     <div class="content">
       <div class="resource-list">
         <ul>
@@ -62,7 +140,7 @@
       </div>
       </div>
     </div>
-  
+    -->
   </div>
 </template>
 
@@ -74,13 +152,19 @@ export default {
   data () {
     return {
       url: 'http://localhost:5000/api/resources',
+      get: true,
+      put: true,
+      post: true,
       username: '',
       msg: '',
+      downloadMsg: '',
       error: false,
       good: false,
       search: '',
       nameOfParam: '',
-      type: '',
+      type: 'String',
+      downloadgood: false,
+      downloadError: false,
       required: false,
       unique: false,
       tempResource: {},
@@ -88,17 +172,18 @@ export default {
       autenticated : false,
       resources: [],
       params: [],
-      resourceUrl:'',
+      tempResourceUrl: `http://localhost:5000`,
       resourceName:'',
+      downloading: false
     }
   },
   created(){
-    if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
+    // if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
-    } else {
-      this.$router.push({ name: 'Login'});
-    }
+    // } else {
+    // this.$router.push({ name: 'Login'});
+    // }
   },
   methods: {
     getResources(){
@@ -109,7 +194,7 @@ export default {
       this.resourceUrl = 'http://localhost:9000/'+ resourceName
     },
     addParam() {
-      if(this.nameOfParam != '' && this.type != ''){
+      if(this.nameOfParam != ''){
           this.params.push({
           name: this.nameOfParam,
           model: `{ ${[this.nameOfParam]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
@@ -117,55 +202,99 @@ export default {
           required: this.required,
           unique: this.unique
         });
-        this.type = '';
+        this.type = 'String';
         this.nameOfParam = '';
         this.unique = false;
         this.required = false;
+      }else {
+        this.error = true;
+        this.msg = 'Params must have name';
+        setTimeout( () => {
+          this.error = false;
+          this.msg = ''
+        }, 5000)
       }
     },
     createResource(){
       if(this.mode === "Edit Resource"){
         if(this.tempResource.params.length != this.params.length){
+          let petitions = []
+          if(this.get === true){
+            petitions.push("GET")
+          }
+          if(this.put === true){
+            petitions.push("PUT")
+          }
+          if(this.post === true){
+            petitions.push("POST")
+          }
           const resource = {
             url: this.resourceUrl,
             name: this.resourceName,
-            params: this.params
+            params: this.params,
+            petitions: petitions
           }
           axios.put(this.url+ '/' + this.resourceName, resource, {headers: { Authorization: localStorage.token}}).then(res => {
             this.good = true;
             this.msg = 'Recurso editado correctamente';
-            this.error = false;
+            setTimeout( () => {
+              this.good = false;
+              this.msg = ''
+            }, 5000)
           }).catch(error => {
-            this.good = false;
             this.msg = error.toString()
             this.error = true;
+            setTimeout( () => {
+              this.error = false;
+              this.msg = ''
+            }, 5000)
           })
         }
       }else{
         if(this.resourceName != '' && this.params.length != 0 ){
           this.getResourceUrl()
+          let petitions = []
+          if(this.get === true){
+            petitions.push("GET")
+          }
+          if(this.put === true){
+            petitions.push("PUT")
+          }
+          if(this.post === true){
+            petitions.push("POST")
+          }
           const resource = {
             url: this.resourceUrl.toString(),
             name: this.resourceName.toString(),
-            params: this.params.slice()
+            params: this.params.slice(),
+            petitions: petitions
           }
           axios.post(this.url, resource, {headers: { Authorization: localStorage.token}}).then(
             res => {
               this.resources.push(resource)
               this.good = true;
               this.msg = 'Recurso creado correctamente';
-              this.error = false;
+              setTimeout( () => {
+                this.good = false;
+                this.msg = ''
+              }, 5000)
           })
           .catch(error => {
             this.resourceUrl = '';
-            this.good = false;
             this.msg = error.toString()
             this.error = true;
+            setTimeout( () => {
+              this.error = false;
+              this.msg = ''
+            }, 5000)
           })
         }else{
-          this.good = false;
           this.error = true;
           this.msg = 'Resource must have params and name can not be empty'
+          setTimeout( () => {
+              this.error = false;
+              this.msg = ''
+          }, 5000)
         }
       }
     },
@@ -180,6 +309,21 @@ export default {
     },
     editResource (resource){
       axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
+        if(resource.petitions.includes( 'GET' )){
+          this.get = true;
+        }else{
+          this.get = false;
+        }
+        if(resource.petitions.includes( 'PUT' )){
+          this.put = true;
+        }else{
+          this.put = false;
+        }
+        if(resource.petitions.includes( 'POST' )){
+          this.post = true;
+        }else{
+          this.post = false;
+        }
         this.resources = res.data
         this.msg = '';
         this.good = false;
@@ -193,6 +337,9 @@ export default {
       })
     },
     addResource (){
+      this.get = true;
+      this.put = true;
+      this.post = true;
       this.msg = '';
       this.good = false;
       this.error = false;
@@ -203,26 +350,45 @@ export default {
       this.mode = 'Create Resource' 
     },
     downloadAPI() {
-      axios({
-        url: 'http://localhost:5000/api/resources/downloadAPI',
-        method: 'GET',
-        responseType: 'blob', // important
-        headers: { Authorization: localStorage.token}
-      }).then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', 'API.tar.gz'); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link)
-          this.good = true;
-          this.msg = 'downloaded successfully'
-      }).catch( error => {
-          this.good = false;
-          this.error = true;
-          this.msg = error
-      });
+      if(this.downloading === false) {
+        this.downloading = true;
+        this.downloadgood = true;
+        this.downloadMsg = "Downloading..."
+        axios({
+          url: 'http://localhost:5000/api/resources/downloadAPI',
+          method: 'GET',
+          responseType: 'blob', // important
+          headers: { Authorization: localStorage.token}
+        }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'API.tar.gz'); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link)
+            setTimeout( () => {
+              this.downloadError = false;
+              this.downloadgood = true;
+              this.downloadMsg = "Downloaded Successfully"
+              setTimeout( () => {
+                this.downloadgood = false;
+                this.downloading = false;
+              }, 3000)
+            }, 10000)
+        }).catch( error => {
+              this.downloadgood = false;
+              this.downloadError = true;
+              this.downloadMsg = "Network Error"
+              setTimeout( () => {
+                this.downloadError = false;
+                this.downloading = false;
+              }, 3000)
+        });
+      }
+    },
+    redirectToHome() {
+      this.$router.push({ name: 'Home' });
     }
   },
   computed: {
@@ -230,64 +396,414 @@ export default {
       return this.resources.filter(resource => {
           return resource.name.match(this.search)
         })
+    },
+    resourceUrl: function() {
+      return this.tempResourceUrl + "/" + this.resourceName
     }
   }
 }
 </script>
 
 <style scoped>
-h6 {
-  background-color: #31B404;
-  width: 30px;
-  height: 20px;
-  padding: 5px 9px 5px 9px;
+.content {
+  width: 830px;
+  margin: auto;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
+
+/*   RESOURCE LIST   */
+.resources-list{
+  padding-top: 20px;
+  width: 410px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  flex-direction: column;
+}
+
+.resources-list h2 {
+  font-size: 17px;
+  color: #3276b1;
+}
+
+.resources-list h1 {
+  color: black;
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.resources-list a {
+  margin-top: 15px;
+  width: 130px;
+  padding: 10px;
+  background-color: #3276b1;
   border-radius: 3px;
-  margin: 0px;
-  margin-right: 7px;
+}
+
+.resources-list ul {
+  width: 100%;
+}
+
+.resources-list ul li {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 5px;
+  background-color: white;
+  border-radius: 3px;
+  border: 0.5px solid #b5b5b5;
+}
+
+.resources-list a.param.red {
+  background-color:  #e74c3c;
+}
+
+.resources-list a.param {
+  margin-top: 0px;
+  width: 50px;
+  height: 30px;
+  padding: 0px;
+  background-color: #34495e;
+  border-radius: 3px;
+  margin-left: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 13px;
+}
+
+.resources-list ul li span {
+  width: 150px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.resources-list ul li span ul{
+  display: flex;
+  flex-direction: row;
+}
+.resources-list ul li span li{
+  width: 51px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  margin-left: 3px;
+  background-color:   #27ae60;
   color: white;
+  border: 0px;
+  font-size: 13px;
 }
-h6.lila{
- background-color: #B404AE
+
+.resources-list span.justify-left {
+  width: 100px;
+  justify-content: left;
+  padding-left: 13px;
 }
-.content .resource-list p.separation{
-  margin-top: 0px;
+
+.resources-list span.justify-right {
+  justify-content: right;
+  padding-right: 5px;
 }
-label.msg {
-  width: 100%;
-  color: red;
-  border: 1px solid red;
+
+/*   CONTROL PANEL  */
+.control-panel {
+  width: 400px;
+  height: 500px;
+  margin-top: 20px;
+  margin-left: 10px;
   display: flex;
-  padding: 5px;
-  background-color:  #fdedec;
-  justify-content: center;
+  justify-content: left;
+  align-items: left;
+  flex-direction: column;
 }
-label.msg-s {
-  width: 100%;
-  color: rgb(2, 122, 2);
-  border: 1px solid green;
+
+.control-panel h2{
+  margin-top: 5px;
+  margin-bottom: 20px;
+  color: black;
+  font-size: 20px;
   display: flex;
-  padding: 5px;
-  background-color:  #62ff9e;
-  justify-content: center;
+  justify-content: left;
+  align-items: center;
+  padding-left: 13px;
 }
-.add-resource{
-  padding: 10px;
-  background-color:   #3276b1;
+.control-panel h3{
+  margin-top: 10px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-left: 17px;
+  color: #3276b1;
+  font-weight: 600;
+}
+.control-panel label{
+  font-weight: 600;
+}
+.name-box {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-left: 15px;
+  color:#3276b1;
+  font-size: 17px;
+}
+.name-box input{
+  height: 30px;
+  padding-left: 10px;
+  margin-left: 10px;
+  font-size: 15px;
+  border: 0.5px solid #b5b5b5;
+}
+.petitions-box {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-left: 10px;
+  margin-top: 10px;
+}
+.petitions-box label{
+  font-weight: 400;
+  width: 70px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  margin-left: 5px;
+  background-color: #27ae60;
+  color: white;
+  border: 0px;
+  font-size: 13px;
   border-radius: 3px;
-  text-align: center;
 }
-label{
+.petitions-box label input{
+  margin-left: 7px;
+}
+
+.param-box {
+  color:#3276b1;
+  font-size: 17px;
+  position: relative;
+}
+.param-box label{
+  font-weight: 400;
+}
+.param-box input[type="text"]{
+  height: 30px;
+  padding-left: 10px;
+  margin-left: 0px;
+  font-size: 15px;
+  border: 0.5px solid #b5b5b5;
+}
+
+.param-box select{
+  height: 38px;
+  margin-left: 0px;
+  font-size: 15px;
+  border: 0.5px solid #b5b5b5;
+}
+
+.param-box .checkbox-box{
+  width: 140px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+
+}
+
+.param-box .checkbox-box label{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding-left: 17px;
+  font-weight: 400;
+}
+
+.param-box a{
   width: 130px;
-  text-align: left;
+  padding: 10px;
+  background-color: #3276b1;
+  border-radius: 3px;
+  position: absolute;
+  top: 90px;
+  left: 235px;
+}
+
+.param-list-box {
+  margin-top: 10px;
   color: #3276b1;
 }
+.param-list-box span{
+  display: flex;
+  justify-content: left;
+}
+.param-list-box label{
+  margin-left: 19px;
+  font-weight: 600;
+}
+
+.param-list-box ul{
+  width: 100%;
+}
+
+.param-list-box ul li{
+  width: 100%;
+  height: 40px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  background-color: white;
+  border-radius: 3px;
+  border: 0.5px solid #b5b5b5;
+  font-size: 15px;
+}
+
+.param-list-box ul li span{
+  width: 85px;
+  height: 40px;
+  padding-left: 10px;
+  display: flex;
+  justify-content: left;
+  align-items: center
+}
+
+.param-list-box ul a{
+  margin-top: 0px;
+  width: 50px;
+  height: 30px;
+  padding: 0px;
+  background-color:  #e74c3c ;
+  border-radius: 3px;
+  margin-left: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+}
+
+.param-list-box span.justify-right {
+  display: flex;
+  justify-content: right;
+  padding-right: 5px;
+}
+
+.finish-all-box {
+  margin-top: 10px;
+  height: 80px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.finish-all-box div{
+  width: 60%;
+  margin-left: 10px;
+  height: 40px;
+  border: 0.5px solid #b5b5b5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #3276b1;
+  border-radius: 3px;
+  border: 1px solid #3276b1;
+  background-color: #d5ebff;
+}
+
+.finish-all-box a{
+  width: 130px;
+  padding: 10px;
+  background-color: #3276b1;
+  border-radius: 3px;
+}
+
+.msg {
+  margin-top: 10px;
+  background-color: #ffc6bf;
+  border: 1px solid red;
+  color: red;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 12px;
+}
+
+.msg-s {
+  margin-top: 10px;
+  background-color: rgb(200, 255, 200);
+  border: 1px solid rgb(1, 185, 1);
+  color: rgb(1, 194, 1);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/*  RESPONSIVE  */
+
+@media (max-width: 500px) {
+    .content{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .left input {
+      display: none;
+    }
+    li.left {
+      margin-left: 10px;
+      width: 130px;
+    }
+    li.left.menu{
+      display: none;
+    }
+    li.rigth{
+      margin-right: 10px;
+    }
+}
+@media (max-width: 900px) {
+    .content{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .left input {
+      display: none
+    }
+    li.left {
+      margin-left: 10px;
+      width: 130px;
+    }
+    li.left.menu{
+      display: none;
+    }
+    li.rigth{
+      margin-right: 10px;
+    }
+}
+
+@media (max-width: 1000px) {
+    li.left.menu{
+      display: none;
+    }
+}
+
+/*  BARRA SUPERIOR  */
 nav ul{
   width: 100%;
   margin: 0 auto;
 }
+
 nav {
   width: 100%;
   height: 60px;
@@ -297,7 +813,7 @@ nav {
   float: right;
   width: 100px;
   height: 60px;
-  margin-right: 80px;
+  margin-right: 65px;
   display: flex;
   justify-content: right;
   align-items: center;
@@ -335,185 +851,52 @@ nav {
   margin-left: 20px;
   padding-left: 20px;
 }
-/**************************************/
-.content {
-  width: 100%;
-}
-.content div{
-  margin: 0 auto;
-}
-.options{
-  padding-top: 10px;
-  width: 830px;
-}
-.edit-add-content {
-  float: right;
-  width: 430px;
-  height: 450px;
-}
-.edit-add-content span{
-  width: 280px;
-  height: 50px;
-  border: 1px solid #b5b5b5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 3px;
-  float: left;
-  color: #3276b1;
-}
-.edit-add-content p a{
-  width: 130px;
-  height: 20px;
-  padding: 10px;
-  background-color:   #3276b1;
-  border-radius: 3px;
-  text-align: center;
-  margin: 10px;
-}
-.edit-add-content ul li a{
-  width: 35px;
-  height: 20px;
-  padding: 5px;
-  background-color:   red;
-  border-radius: 3px;
-  text-align: center;
-  float: right;
-  margin: 0px;
-  margin-right: 5px;
-}
-.edit-add-content p {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-  color: #3276b1;
-}
-.edit-add-content p.param-options {
-  display: flex;
-  justify-content: left;
-  align-items: left;
-}
-.edit-add-content form a{
-  padding: 10px;
-  background-color:   #3276b1;
-  border-radius: 3px;
-}
-.edit-add-content form{
-  width: 100%;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  padding-left: 20px;
-}
-.edit-add-content form .checkbox{
-  width: 60px;
-}
-.edit-add-content ul{
-  width: 100%;
-  margin: 0px;
-}
-.edit-add-content li{
-  width: 100px;
-  height: 30px;
-  margin: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.edit-add-content li h3{
-  widows: 10px;
-  height: 30px;
-}
-.edit-add-content form input{
-  height: 19px;
-  width: 180px;
-  padding: 10px;
-  padding-left: 10px;
-  border-radius: 2px;
-  border: 0.3px solid #b5b5b5;
-  font-size: 16px;
-  color:#555;
-}
-.edit-add-content form select{
+.left img{
+  width: 150px;
   height: 40px;
-  width: 90px;
-  border-radius: 2px;
-  border: 0.3px solid #b5b5b5;
-  font-size: 16px;
-  color:#555;
+}
+li.left.menu{
   margin-left: 10px;
+  width: 240px;
 }
-.options a{
-  width: 50px;
-  height: 50px;
-  background-color: #2e86c1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50px;
-  font-size: 30px;
-  margin-left: 10px;
+.left.menu a:hover {
+  -webkit-box-shadow: inset 0px 0px 94px -61px rgba(255,255,255,1);
+  -moz-box-shadow: inset 0px 0px 94px -61px rgba(255,255,255,1);
+  box-shadow: inset 0px 0px 94px -61px rgba(255,255,255,1);
 }
-.options p{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;
-  text-justify: none;
-  height: 50px;
-  margin: 0px;
-  padding: 0px;
-  color: black;
-  font-size: 11px;
-  margin-left: 20px;
-}
-.resource-list{
-  padding-top: 10px;
-  width: 900px;
-}
-.resource-list ul{
-  width: 440px;
-  float: left;
-}
-.resource-list li{
-  background-color: white;
-  width: 440px;
+.left a{
+  width: 150px;
   height: 40px;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+li.left.menu span.msg-s{
+  margin-left: 10px;
+  margin-top: 0px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(200, 255, 200);
+  border: 1px solid rgb(1, 185, 1);
+  color: rgb(1, 194, 1);
   border-radius: 3px;
-  margin-top: 10px;  
-  border: 0.3px solid #b5b5b5;
+  padding: 11px;
 }
 
-.resource-list li h3{
-  width: 200px;
-  height: 40px;
-  margin: 0px;
-  padding: 0px;
-  margin-left: 20px;
-  font-size: 13px;
-  font-style: normal;
-  color: #3276b1;
-  float: left;
-  display: flex;
-  align-items: center;
-}
-
-.resource-list li a{
-  width: 50px;
-  height: 30px;
-  margin-right: 6px;
-  margin-top: 6px;
-  font-size: 13px;
-  font-style: normal;
-  color: white;
-  background-color: #3276b1;
+li.left.menu span.msg{
+  margin-left: 10px;
+  margin-top: 0px;
+  width: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #ffc6bf;
+  border: 1px solid red;
+  color: red;
   border-radius: 3px;
-  float: right;
+  padding: 11px;
 }
 </style>

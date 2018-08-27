@@ -32,6 +32,9 @@ p {
 h1 {
   color: white
 }
+h3,h2,h1,h6 {
+  margin: 0px;
+}
 button{
   color: white;
   cursor: pointer;

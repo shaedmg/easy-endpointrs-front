@@ -19,7 +19,7 @@
       </form>
     </nav>
     <div class="footer">
-
+      <img src="../../build/logo.png" alt="" @click="redirectToHome()">
     </div>
   </div>
 </template>
@@ -117,8 +117,15 @@ label.msg-s {
   justify-content: center;
 }
 .footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: black;
   height: 59px;
+}
+.footer img{
+  width: 150px;
+  height: 40px;
 }
 h3 {
   width: 100%;

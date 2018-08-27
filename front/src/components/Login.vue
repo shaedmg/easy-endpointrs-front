@@ -12,7 +12,7 @@
       </form>  
     </nav>
     <div class="footer">
-
+      <img src="../../build/logo.png" alt="" @click="redirectToHome()">
     </div>
   </div>
 
@@ -44,7 +44,6 @@ export default {
             username: this.username,
             password: this.password
         }).then(function(res){
-          console.log(res.data);
           localStorage.setItem("token", res.data);
           resolve();
         });
@@ -64,8 +63,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: black;
   height: 59px;
+}
+.footer img{
+  width: 150px;
+  height: 40px;
 }
 h3 {
   width: 100%;
