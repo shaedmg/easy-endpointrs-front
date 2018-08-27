@@ -86,32 +86,19 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [{
-        name: 'culo',
-        url: 'ffifesifgiuegfyegifug',
-        params: [
-          {
-            name: 'tu',
-            type: 'culo',
-            required: false,
-            unique: true
-          }
-        ]
-      }],
+      resources: [],
       params: [],
       resourceUrl:'',
       resourceName:'',
     }
   },
   created(){
-    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
-    */
   },
   methods: {
     getResources(){
@@ -192,16 +179,18 @@ export default {
         this.params.splice(index, 1)
     },
     editResource (resource){
-      this.msg = '';
-      this.good = false;
-      this.error = false;
-      this.tempResource = Object.assign({}, resource)
-      this.tempResource.params = resource.params.slice()
-      this.resourceUrl = resource.url.toString();
-      this.resourceName = resource.name.toString();
-      this.params = resource.params.slice();
-      console.log(this.params)
-      this.mode = 'Edit Resource' 
+      axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
+        this.resources = res.data
+        this.msg = '';
+        this.good = false;
+        this.error = false;
+        this.tempResource = Object.assign({}, resource)
+        this.tempResource.params = resource.params.slice()
+        this.resourceUrl = resource.url.toString();
+        this.resourceName = resource.name.toString();
+        this.params = resource.params.slice();
+        this.mode = 'Edit Resource'
+      })
     },
     addResource (){
       this.msg = '';

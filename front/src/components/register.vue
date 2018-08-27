@@ -59,7 +59,7 @@ export default {
                   this.$router.push({ name: 'Login'});
                 })
               }else{
-                for(let i = 0 ; i < data.length; i++){
+                for(let i = 0 ; i < response.data.length; i++){
                   this.msg = this.msg + data[i] + " "
                 }
               }
