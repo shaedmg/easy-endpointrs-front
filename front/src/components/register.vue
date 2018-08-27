@@ -14,6 +14,7 @@
         <label>Confirm Password</label>
         <input type="password" placeholder="Confirm Password..." v-model="passwordConfirmed">
         <label class="msg" v-if="this.state">{{ msg }}</label>
+        <label class="msg-s" v-if="good">{{ msg }}</label>
         <a @click="createUser()">Register</a>
       </form>
     </nav>
@@ -37,6 +38,7 @@ export default {
       passwordConfirmed: '',
       msg: '',
       state: false,
+      good: false,
       users: []
     }
   },
@@ -54,21 +56,25 @@ export default {
             localStorage.setItem("token", response.data);
             axios.get(`http://localhost:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
             .then(()=>{
-              if(response.data[0] != undefined){
                 axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
-                  this.$router.push({ name: 'Login'});
-                })
-              }else{
-                for(let i = 0 ; i < response.data.length; i++){
-                  this.msg = this.msg + data[i] + " "
-                }
-              }
+                this.state = false;
+                this.good = true;
+                this.msg = "redirecting :)"
+                this.$router.push({ name: 'Login'});
             })
-          });
+            })
+          }).catch(response => {
+            this.good = false;
+            this.state = true
+            this.msg = response.response.data[0]
+          })
         }else{
+          this.good = false;
+          this.state = true;
           this.msg = "Email or Username already exists"
         }
       }else {
+        this.good = false;
         this.msg = "Any camp Empty or Invalid"
         this.state = true;
       }
@@ -101,6 +107,15 @@ function checkPasswordConfirmed(password, passwordConfirmed) {
 </script>
 
 <style scoped>
+label.msg-s {
+  width: 100%;
+  color: rgb(2, 122, 2);
+  border: 1px solid green;
+  display: flex;
+  padding: 5px;
+  background-color:  #62ff9e;
+  justify-content: center;
+}
 .footer {
   background-color: black;
   height: 59px;

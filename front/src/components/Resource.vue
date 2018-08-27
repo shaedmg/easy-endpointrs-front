@@ -112,7 +112,7 @@ export default {
       if(this.nameOfParam != '' && this.type != ''){
           this.params.push({
           name: this.nameOfParam,
-          model: `{ ${[this.nameOfParam.toString()]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
+          model: `{ ${[this.nameOfParam]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
           type: this.type, 
           required: this.required,
           unique: this.unique
@@ -171,8 +171,8 @@ export default {
     },
     deleteResource(resource){
       const index = this.resources.indexOf(resource)
-      this.resources.splice(index, 1)
       axios.delete(this.url + '/' + resource.name, {headers: { Authorization: localStorage.token}})
+      this.resources.splice(index, 1)
     },
     deleteParam(param){
         const index = this.params.indexOf(param)
@@ -188,7 +188,7 @@ export default {
         this.tempResource.params = resource.params.slice()
         this.resourceUrl = resource.url.toString();
         this.resourceName = resource.name.toString();
-        this.params = resource.params.slice();
+        this.params = resource.params;
         this.mode = 'Edit Resource'
       })
     },
