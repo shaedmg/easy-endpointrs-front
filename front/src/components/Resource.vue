@@ -43,17 +43,22 @@
         </ul>
       </div>
       <div class="control-panel">
-        <h2>{{mode}}</h2>
+        <span>
+          <h2>{{mode}}<span class="cerrar"><a>x</a></span></h2>
+        </span>
         <span class="name-box">
           <label>Resource Name:<input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'"></label>
+          <div>{{ resourceUrl }}</div>
         </span>
         <span class="petitions-box">
-          <label>GET <input type="checkbox" v-model="get"></label>
-          <label>PUT <input type="checkbox" v-model="put"></label>
-          <label>POST<input type="checkbox" v-model="post"></label>
+          <label class="get">GET </label><input type="checkbox" v-model="get">
+          <label class="put">PUT </label><input type="checkbox" v-model="put">
+          <label class="post">POST</label><input type="checkbox" v-model="post">
+          <label class="delete">DELETE</label><input type="checkbox" v-model="post">
         </span>
+        <fieldset>
+        <legend>Add Param</legend>
         <span class="param-box">
-          <h3>Add Param</h3>
           <label>Name: </label><input type="text" placeholder="Name..." v-model="nameOfParam">
           <label>Type: </label>
           <select v-model="type">
@@ -62,31 +67,34 @@
                 <option value="Boolean">Boolean</option>
           </select>
           <span class="checkbox-box">
-            <label>Required&nbsp; <input type="checkbox" v-model="required"></label>
-            <label>Unique&nbsp;&nbsp;&nbsp;&nbsp;   <input type="checkbox" v-model="unique"></label>
+            <label>Required<input type="checkbox" v-model="required"></label>
+            <label>Unique<input type="checkbox" v-model="unique"></label>
           </span>
           <a @click="addParam()">Add Param</a>
         </span>
+        </fieldset>
         <span class="param-list-box">
           <span>
-            <label>Name</label><label>&nbsp;Type</label><label>&nbsp;&nbsp;Required</label><label>Unique</label>
+            <h3>Resource Params</h3>
+            <span class="titles">
+              <label>Name</label><label>&nbsp;Type</label><label>&nbsp;&nbsp;Required</label><label>Unique</label>
+            </span>
           </span>
           <ul>
             <li v-for="param in params" :key="param.name">
-              <span class="">{{ param.name }}</span>
+              <span>{{ param.name }}</span>
               <span>{{param.type}}</span>
               <span>{{param.required}}</span>
               <span>{{param.unique}}</span>
-              <span class="justify-right"><a @click="deleteParam(param)">Delete</a></span>
+              <a @click="deleteParam(param)" class="justify-right">Delete</a>
             </li>
           </ul>
         </span>
         <span class="finish-all-box">
           <a @click="createResource()">{{mode}}</a>
-          <div>{{ resourceUrl }}</div>
+          <label class="msg" v-if="error"> {{ msg }}</label>
+          <label class="msg-s" v-if="good">{{ msg }}</label>
         </span>
-        <label class="msg" v-if="error"> {{ msg }}</label>
-        <label class="msg-s" v-if="good">{{ msg }}</label>
       </div>
     </div>
     <!--
@@ -299,13 +307,17 @@ export default {
       }
     },
     deleteResource(resource){
-      const index = this.resources.indexOf(resource)
-      axios.delete(this.url + '/' + resource.name, {headers: { Authorization: localStorage.token}})
-      this.resources.splice(index, 1)
+      if(confirm("Delete Resource [" + resource.name + "] ?")){
+        const index = this.resources.indexOf(resource)
+        axios.delete(this.url + '/' + resource.name, {headers: { Authorization: localStorage.token}})
+        this.resources.splice(index, 1)
+      }
     },
     deleteParam(param){
+      if(confirm("Delete Param [ " + param.name + " ] ?")){
         const index = this.params.indexOf(param)
         this.params.splice(index, 1)
+      }
     },
     editResource (resource){
       axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
@@ -399,6 +411,8 @@ export default {
     },
     resourceUrl: function() {
       return this.tempResourceUrl + "/" + this.resourceName
+    },
+    lessThanZero: function () {
     }
   }
 }
@@ -438,7 +452,7 @@ export default {
   margin-top: 15px;
   width: 130px;
   padding: 10px;
-  background-color: #3276b1;
+  background-color:  #327952;
   border-radius: 3px;
 }
 
@@ -467,7 +481,7 @@ export default {
   width: 50px;
   height: 30px;
   padding: 0px;
-  background-color: #34495e;
+  background-color:  #327952;
   border-radius: 3px;
   margin-left: 2px;
   display: flex;
@@ -515,20 +529,30 @@ export default {
 /*   CONTROL PANEL  */
 .control-panel {
   width: 400px;
-  height: 500px;
   margin-top: 20px;
   margin-left: 10px;
   display: flex;
   justify-content: left;
   align-items: left;
   flex-direction: column;
+  border: 1px solid #27ae60;
+}
+.control-panel span.cerrar{
+  width: 170px;
+  height: 29px;
+  text-align: right;
+}
+
+.control-panel span.cerrar a{
+  color: #27ae60;
 }
 
 .control-panel h2{
-  margin-top: 5px;
+  width: 100%;
+  margin-top: 10px;
   margin-bottom: 20px;
   color: black;
-  font-size: 20px;
+  font-size: 25px;
   display: flex;
   justify-content: left;
   align-items: center;
@@ -541,20 +565,36 @@ export default {
   justify-content: left;
   align-items: center;
   padding-left: 17px;
-  color: #3276b1;
+  color:  #327952;
   font-weight: 600;
+  font-size: 17px;
 }
 .control-panel label{
   font-weight: 600;
 }
 .name-box {
+  height: 80px;
   display: flex;
+  flex-direction: column;
   justify-content: left;
   align-items: center;
-  padding-left: 15px;
-  color:#3276b1;
+  padding-left: 5px;
+  color: #327952;
   font-size: 17px;
 }
+
+.name-box div{
+  width: 95%;
+  height: 40px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:  #327952;
+  border-radius: 3px;
+  background-color: #d5ebff;
+}
+
 .name-box input{
   height: 30px;
   padding-left: 10px;
@@ -566,8 +606,8 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
-  padding-left: 10px;
-  margin-top: 10px;
+  padding-left: 0px;
+  margin-top: 5px;
 }
 .petitions-box label{
   font-weight: 400;
@@ -577,20 +617,53 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 0px;
-  margin-left: 5px;
-  background-color: #27ae60;
-  color: white;
+  margin-left: 4px;
+  color: #327952;
   border: 0px;
   font-size: 13px;
+  font-weight: 600;
   border-radius: 3px;
 }
+
+.petitions-box .post{
+  color: #4070ec;
+}
+
+.petitions-box .put{
+  color: #e5c500;
+}
+
+.petitions-box .get{
+  color: green;
+}
+
+.petitions-box .delete{
+  color: #ed0039;
+}
+
 .petitions-box label input{
   margin-left: 7px;
 }
 
-.param-box {
-  color:#3276b1;
+fieldset {
+  padding: 0px;
+  padding-top: 5px;
+  width: 370px;
+  margin-left: 15px;
+  margin-top: 15px;
+  border: 1px solid#27ae60;
+}
+
+fieldset legend{
+  color:#327952;
   font-size: 17px;
+  font-weight: 600;
+  margin: 0px 5px 0px 5px;
+}
+
+.param-box {
+  color: #327952;
+  font-size: 15px;
   position: relative;
 }
 .param-box label{
@@ -612,12 +685,10 @@ export default {
 }
 
 .param-box .checkbox-box{
-  width: 140px;
+  width: 180px;
   height: 50px;
   display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-
+  flex-direction: row;
 }
 
 .param-box .checkbox-box label{
@@ -629,22 +700,32 @@ export default {
 }
 
 .param-box a{
-  width: 130px;
-  padding: 10px;
-  background-color: #3276b1;
-  border-radius: 3px;
+  width: 80px;
+  padding: 5px;
+  font-size: 12px;
+  background-color:  #007c1b;
   position: absolute;
-  top: 90px;
-  left: 235px;
+  top: 43px;
+  left: 255px;
 }
 
 .param-list-box {
   margin-top: 10px;
-  color: #3276b1;
+  color:  #327952;
 }
 .param-list-box span{
   display: flex;
+  flex-direction: column;
   justify-content: left;
+}
+.param-list-box span h3{
+  font-size: 20px;
+}
+.param-list-box span.titles{
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  margin-top: 5px
 }
 .param-list-box label{
   margin-left: 19px;
@@ -656,7 +737,8 @@ export default {
 }
 
 .param-list-box ul li{
-  width: 100%;
+  width: 96%;
+  margin-left: 7px;
   height: 40px;
   margin-top: 5px;
   display: flex;
@@ -669,12 +751,8 @@ export default {
 }
 
 .param-list-box ul li span{
-  width: 85px;
-  height: 40px;
+  width: 60px;
   padding-left: 10px;
-  display: flex;
-  justify-content: left;
-  align-items: center
 }
 
 .param-list-box ul a{
@@ -691,43 +769,30 @@ export default {
   font-size: 13px;
 }
 
-.param-list-box span.justify-right {
-  display: flex;
-  justify-content: right;
-  padding-right: 5px;
+.param-list-box ul li a.justify-right{
+  float: right;
 }
 
 .finish-all-box {
   margin-top: 10px;
+  padding-left: 0px;
   height: 80px;
   display: flex;
-  justify-content: left;
-  align-items: center;
-}
-
-.finish-all-box div{
-  width: 60%;
-  margin-left: 10px;
-  height: 40px;
-  border: 0.5px solid #b5b5b5;
-  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #3276b1;
-  border-radius: 3px;
-  border: 1px solid #3276b1;
-  background-color: #d5ebff;
 }
 
 .finish-all-box a{
   width: 130px;
   padding: 10px;
-  background-color: #3276b1;
+  background-color:  #327952;
   border-radius: 3px;
 }
 
 .msg {
   margin-top: 10px;
+  width: 100%;
   background-color: #ffc6bf;
   border: 1px solid red;
   color: red;
@@ -807,7 +872,7 @@ nav ul{
 nav {
   width: 100%;
   height: 60px;
-  background-color: #3276b1;
+  background-color:  #327952;
 }
 .rigth{
   float: right;

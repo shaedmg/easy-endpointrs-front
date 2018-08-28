@@ -2,7 +2,7 @@
   <div>
     <nav>
       <form action="">
-        <h3>EasyEndPoints</h3>
+        <img src="../../build/eep_horizontal.svg" alt="">
         <label >Email</label>
         <input type="text" placeholder="Email..." id="email_field" v-model="username"/>
         <label >Password</label>
@@ -11,9 +11,6 @@
         <a @click="login()">Sign In</a>
       </form>  
     </nav>
-    <div class="footer">
-      <img src="../../build/logo.png" alt="" @click="redirectToHome()">
-    </div>
   </div>
 
 </template>
@@ -62,16 +59,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: black;
-  height: 59px;
-}
-.footer img{
-  width: 150px;
-  height: 40px;
+body {
+  background-color:  #327952;
 }
 h3 {
   width: 100%;
@@ -82,21 +71,22 @@ h3 {
   color: white;
 }
 label {
-  width: 270px;
+  width: 220px;
   display: flex;
   text-align: left;
   margin-top: 10px;
   font-size: 15px;
   color: white;
+  font-weight: 700;
 }
 nav {
   width: 100%;
-  height: 900px;
+  height: 796px;
   /*IMPORTANTE*/
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../../build/fondo.png');
+  background-color:  #327952;
 }
 nav form {
   width: 300px;
@@ -108,27 +98,27 @@ nav form {
 }
 nav form input{
   height: 20px;
-  width: 250px;
+  width: 200px;
   padding: 10px;
   padding-left: 10px;
   border-radius: 2px;
   border: 0.3px solid #b5b5b5;
   font-size: 16px;
   color:#555;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 nav form a {
   height: 20px;
   margin-top: 20px;
   border-radius: 3px;
-  background-color:   #3276b1;
-  width: 250px;
+  background-color:    #F7A500;
+  width: 200px;
   border: 0px;
   color: white;
   padding: 10px;
   font-size: 18px;
-  -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
-  -moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
-  box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
+  border-radius: 10px;
 }
 label.msg {
   color: red;

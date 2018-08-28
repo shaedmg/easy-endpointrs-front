@@ -12,8 +12,8 @@ export default {
 
 <style>
  @font-face {
-    font-family: Lato;
-    src: url('https://fonts.googleapis.com/css?family=Lato:400,700,900'),
+    font-family: LatoMontserrat;
+    src: url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700,900'),
 }
 ul {
   list-style: none;
@@ -26,7 +26,6 @@ a {
   text-decoration: none;
 }
 p {
-  text-align: justify;
   color: white
 }
 h1 {
@@ -40,7 +39,6 @@ button{
   cursor: pointer;
 }
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -52,6 +50,6 @@ body {
 }
 * {
   font-weight: 400;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 </style>

@@ -2,25 +2,26 @@
   <div id="register">
     <nav>
       <form action="">
-        <h3>EasyEndPoints</h3>
-        <label>Name</label>
-        <input type="text" placeholder="Name..." v-model="name">
-        <label>Email</label>
-        <input type="text" placeholder="Email..." v-model="email">
-        <label>Username</label>
-        <input type="text" placeholder="Username..." v-model="username">
-        <label>Password</label>
-        <input type="password" placeholder="Password..." v-model="password">
-        <label>Confirm Password</label>
-        <input type="password" placeholder="Confirm Password..." v-model="passwordConfirmed">
+        <img src="../../build/eep_horizontal.svg" alt="">
+        <span>
+          <label>Name</label>
+          <input type="text" placeholder="Name..." v-model="name">
+          <label>Email</label>
+          <input type="text" placeholder="Email..." v-model="email">
+          <label>Username</label>
+        </span>
+        <span>
+          <input type="text" placeholder="Username..." v-model="username">
+          <label>Password</label>
+          <input type="password" placeholder="Password..." v-model="password">
+          <label>Confirm Password</label>
+          <input type="password" placeholder="Confirm Password..." v-model="passwordConfirmed">
+          <a @click="createUser()">Register</a>
+        </span>
         <label class="msg" v-if="this.state">{{ msg }}</label>
         <label class="msg-s" v-if="good">{{ msg }}</label>
-        <a @click="createUser()">Register</a>
       </form>
     </nav>
-    <div class="footer">
-      <img src="../../build/logo.png" alt="" @click="redirectToHome()">
-    </div>
   </div>
 </template>
 
@@ -107,6 +108,9 @@ function checkPasswordConfirmed(password, passwordConfirmed) {
 </script>
 
 <style scoped>
+.register {
+
+}
 label.msg-s {
   width: 100%;
   color: rgb(2, 122, 2);
@@ -116,17 +120,6 @@ label.msg-s {
   background-color:  #62ff9e;
   justify-content: center;
 }
-.footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
-  height: 59px;
-}
-.footer img{
-  width: 150px;
-  height: 40px;
-}
 h3 {
   width: 100%;
   padding-bottom: 10px;
@@ -135,7 +128,7 @@ h3 {
   color: white;
 }
 label {
-  width: 260px;
+  width: 210px;
   display: flex;
   text-align: left;
   margin-top: 10px;
@@ -144,40 +137,45 @@ label {
 }
 nav {
   width: 100%;
-  height: 900px;
+  height: 796px;
   /*IMPORTANTE*/
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../../build/fondo.png');
+  background-color:  #327952;
 }
 nav form {
-  width: 300px;
-  height: 450px;
+  width: 800px;
+  height: 500px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 }
+nav form span{
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+}
 nav form input{
-  width: 250px;
+  width: 200px;
   height: 30px;
   padding-left: 10px;
-  border-radius: 2px;
+  border-radius: 10px;
   border: 0.3px solid #b5b5b5;
+  margin-top: 10px;
 }
 nav form a {
   height: 20px;
   margin-top: 30px;
-  border-radius: 3px;
-  background-color:   #3276b1;
-  width: 250px;
+  border-radius: 10px;
+  background-color:    #F7A500;
+  width: 200px;
   border: 0px;
   color: white;
   padding: 10px;
-  -webkit-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
-  -moz-box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
-  box-shadow: 0px 4px 6px 0px rgba(0,0,0,0.41);
 }
 label.msg {
   color: red;
