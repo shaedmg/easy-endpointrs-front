@@ -99,58 +99,6 @@
         </span>
       </div>
     </div>
-    <!--
-    <div class="content">
-      <div class="resource-list">
-        <ul>
-          <h2>Your Resources</h2>
-          <p><a class="add-resource" @click="addResource ()"> Add New Resource </a></p>
-          <li v-for="resource in filterResource" :key="resource.id">
-            <h3>{{resource.name}}</h3><a @click="editResource (resource)">Edit</a><a class="" @click="deleteResource(resource)">Delete</a>
-          </li>
-        </ul>
-        <div class="edit-add-content">
-        <form action="">
-          <h3>{{mode}}</h3>
-          <p>
-            <label>Resource Name:</label>
-            <input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'">
-          </p>
-          <p>
-            <input type="text" placeholder="Name..." v-model="nameOfParam">
-            <select v-model="type">
-                <option value="String">String</option>
-                <option value="Number">Number</option>
-                <option value="Boolean">Boolean</option>
-            </select>
-            <a @click="addParam()">Add Param</a>
-          </p>
-          <p class="separation">
-            <input class="checkbox" type="checkbox" v-model="required">
-            <label class="checkbox">required</label>
-            <input class="checkbox" type="checkbox" v-model="unique">
-            <label class="checkbox">unique</label>
-          </p>
-        </form>
-        <p></p>
-        <p>
-          <ul>
-            <li v-for="param in params" :key="param.name">
-              <p class="param-options">Name : {{ param.name }} Type : {{param.type}}</p><h6>{{param.required}}</h6> <h6 class="lila">{{param.unique}}</h6> <a @click="deleteParam(param)">x</a>
-            </li>
-          </ul>
-        </p>
-        <p>
-        <a @click="createResource()">{{mode}}</a>
-        <span>{{ resourceUrl }}</span>
-        </p>
-        <p><span @click="downloadAPI()"> Descargar API </span></p>
-        <label class="msg" v-if="error">{{ msg }}</label>
-        <label class="msg-s" v-if="good">{{ msg }}</label>
-      </div>
-      </div>
-    </div>
-    -->
   </div>
 </template>
 
@@ -182,7 +130,7 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [],
+      resources: [{name: "Mesas"}],
       params: [],
       tempResourceUrl: `http://localhost:9000`,
       resourceName:'',
@@ -190,12 +138,12 @@ export default {
     }
   },
   created(){
-    // if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
+    if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
-    // } else {
-    // this.$router.push({ name: 'Login'});
-    // }
+    } else {
+      this.$router.push({ name: 'Login'});
+    }
   },
   methods: {
     getResources(){
@@ -222,7 +170,6 @@ export default {
         this.unique = false;
         this.required = false;
       }else {
-        this.display = false;
         this.error = true;
         this.msg = 'Params must have name';
         setTimeout( () => {
@@ -252,7 +199,7 @@ export default {
           }
           axios.put(this.url+ '/' + this.resourceName, resource, {headers: { Authorization: localStorage.token}}).then(res => {
             this.good = true;
-            this.msg = 'Recurso editado correctamente';
+            this.msg = 'correctly edited Resource';
             setTimeout( () => {
               this.good = false;
               this.msg = ''
@@ -289,7 +236,7 @@ export default {
             res => {
               this.resources.push(resource)
               this.good = true;
-              this.msg = 'Recurso creado correctamente';
+              this.msg = 'correctly created Resource';
               setTimeout( () => {
                 this.good = false;
                 this.msg = ''
@@ -434,17 +381,17 @@ export default {
 
 <style scoped>
 .content {
-  width: 830px;
+  width: 870px;
   margin: auto;
   display: flex;
-  justify-content: left;
-  align-items: left;
+  justify-content: center;
+  align-items: top;
 }
 
 /*   RESOURCE LIST   */
 .resources-list{
   padding-top: 20px;
-  width: 410px;
+  width: 450px;
   display: flex;
   justify-content: left;
   align-items: left;
@@ -453,7 +400,7 @@ export default {
 
 .resources-list h2 {
   font-size: 17px;
-  color: #3276b1;
+  color: #327952;
 }
 
 .resources-list h1 {
@@ -495,7 +442,7 @@ export default {
   width: 50px;
   height: 30px;
   padding: 0px;
-  background-color:  #327952;
+  background-color:  #34495e;
   border-radius: 3px;
   margin-left: 2px;
   display: flex;
@@ -530,7 +477,7 @@ export default {
 }
 
 .resources-list span.justify-left {
-  width: 100px;
+  width: 150px;
   justify-content: left;
   padding-left: 13px;
 }
@@ -606,7 +553,7 @@ export default {
   align-items: center;
   color:  #327952;
   border-radius: 3px;
-  background-color: #d5ebff;
+  background-color: #d5ffd7;
 }
 
 .name-box input{
@@ -881,28 +828,28 @@ fieldset legend{
     }
 }
 
-@media (max-width: 1000px) {
-    li.left.menu{
-      display: none;
-    }
-}
-
 /*  BARRA SUPERIOR  */
 nav ul{
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 nav {
   width: 100%;
   height: 60px;
   background-color:  #327952;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 .rigth{
-  float: right;
   width: 100px;
   height: 60px;
-  margin-right: 65px;
   display: flex;
   justify-content: right;
   align-items: center;
@@ -910,7 +857,7 @@ nav {
 .rigth img{
   width: 30px;
   height: 30px;
-  background-color:  #f6ddcc ;
+  background-color:  white ;
   margin-left: 15px;
   border-radius: 50px;
 }
@@ -919,17 +866,11 @@ nav {
   font-size: 12px;
 }
 .left {
-  float: left;
-  margin-left: 80px;
-  width: 500px;
+  width: 470px;
   height: 60px;
   display: flex;
   justify-content: left;
   align-items: center;
-}
-.left img{
-  width: 150px;
-  height: 40px;
 }
 .left input {
   width: 300px;
@@ -941,7 +882,7 @@ nav {
   padding-left: 20px;
 }
 .left img{
-  width: 150px;
+  width: 120px;
   height: 40px;
   cursor: pointer;
 }

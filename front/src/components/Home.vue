@@ -17,8 +17,8 @@
             <h1>&nbsp;EasyEndPoint</h1>
             <p>
               EasyEndPoint is the world’s largest <s>resources automation platform.</s><br>
-              It’s like a <s>second brain</s> that helps millions of customers—from small e-<br>
-              commerce shops to big online retailers—find their audience, engage <br>
+              It’s like a <s>second brain</s> that helps millions of customers —from small e-<br>
+              commerce shops to big online retailers— find their audience, engage <br>
               their customers, and build their brand.
             </p>
             <a @click="register()">Try now for free</a>
@@ -67,8 +67,6 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .home {
   height: 100%;
