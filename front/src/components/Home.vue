@@ -14,10 +14,10 @@
       <div class="header">
         <ul>
           <li class="left">        
-            <h1>&nbsp;EasyEndPoint<br>export your life</h1>
+            <h1>&nbsp;EasyEndPoint</h1>
             <p>
-              EasyEndPoint is the world’s largest resources automation platform.<br>
-              It’s like a second brainthat helps millions of customers—from small e-<br>
+              EasyEndPoint is the world’s largest <s>resources automation platform.</s><br>
+              It’s like a <s>second brain</s> that helps millions of customers—from small e-<br>
               commerce shops to big online retailers—find their audience, engage <br>
               their customers, and build their brand.
             </p>
@@ -70,31 +70,26 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.footer {
-  background-color: black;
-  height: 59px;
-  margin-top: 120px;
-}
 .home {
-  background-color:#327952;
-  width: 100%;
+  height: 100%;
 }
 .info {
   width: 100%;
-  height: 290px;
+  height: 359px;
   display: flex;
+  justify-content: center;
   align-items: center;
   background-color: white;
+  margin-top: 50px;
 }
 .info ul {
-  width: 100%;
-  height: 100%;
+  padding-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .info li {
-  width: 200px;
+  width: 220px;
   height: 200px;
   margin-left: 95px;
   display: flex;
@@ -113,10 +108,13 @@ export default {
   color: #262626;
   text-align: inherit;
   height: 50px;
+  margin-bottom: 0px;
 }
 nav {
-  height: 50px;
+  height: 100px;
   width: 100%;
+  margin-bottom: 50px;
+  background-color: #327952;
 }
 nav ul{
   width: 100%;
@@ -130,6 +128,7 @@ img.logo {
   width: 150px;
   height: 100px;
   margin-left: 40px;
+  cursor: pointer;
 }
 nav li {
   width: 150px;
@@ -149,12 +148,14 @@ nav li a {
   height: 400px;
   display: flex;
   align-items: center;
+  background-color: #327952;
 }
 .header ul {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #327952;
 }
 .header a {
   background-color:   #F7A500;
@@ -171,19 +172,16 @@ nav li a {
   background-color:#F7A500;
 }
 .header p {
-  width: 500px;
-  font-size: 15px;
+  width: 540px;
+  font-size: 17px;
   margin-top: 30px;
-  display: flex;
-  justify-content:center;
-  align-items: center;
 }
-.header p span {
-  float: none;
+.header p s{
   margin: 0px;
   padding: 0px;
   width: 0px;
   height: 0px;
+  text-decoration:none;
   color:#F7A500;
 }
 .header h1 {

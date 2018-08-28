@@ -3,7 +3,7 @@
     <nav>
       <ul>
         <li class="left">
-          <img src="../../build/logo1.png" alt="" @click="redirectToHome()">
+          <img src="../../build/eep_horizontal.svg" @click="redirectToHome()">
           <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
         </li>
         <li class="left menu">
@@ -42,9 +42,9 @@
           </li>
         </ul>
       </div>
-      <div class="control-panel">
+      <div class="control-panel" v-if="open">
         <span>
-          <h2>{{mode}}<span class="cerrar"><a>x</a></span></h2>
+          <h2>{{mode}}<span class="cerrar"><a @click="close()">x</a></span></h2>
         </span>
         <span class="name-box">
           <label>Resource Name:<input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'"></label>
@@ -74,10 +74,10 @@
         </span>
         </fieldset>
         <span class="param-list-box">
-          <span>
+          <span v-if="display">
             <h3>Resource Params</h3>
             <span class="titles">
-              <label>Name</label><label>&nbsp;Type</label><label>&nbsp;&nbsp;Required</label><label>Unique</label>
+              <label>Name</label><label>&nbsp;&nbsp;Type</label><label>&nbsp;&nbsp;Required</label><label>Unique</label>
             </span>
           </span>
           <ul>
@@ -92,6 +92,8 @@
         </span>
         <span class="finish-all-box">
           <a @click="createResource()">{{mode}}</a>
+        </span>
+        <span class="msgs" v-if="error || good">
           <label class="msg" v-if="error"> {{ msg }}</label>
           <label class="msg-s" v-if="good">{{ msg }}</label>
         </span>
@@ -160,6 +162,8 @@ export default {
   data () {
     return {
       url: 'http://localhost:5000/api/resources',
+      open: false,
+      display: false,
       get: true,
       put: true,
       post: true,
@@ -180,7 +184,7 @@ export default {
       autenticated : false,
       resources: [],
       params: [],
-      tempResourceUrl: `http://localhost:5000`,
+      tempResourceUrl: `http://localhost:9000`,
       resourceName:'',
       downloading: false
     }
@@ -202,6 +206,9 @@ export default {
       this.resourceUrl = 'http://localhost:9000/'+ resourceName
     },
     addParam() {
+      if(this.params.length === 0){
+        this.display = true;
+      }
       if(this.nameOfParam != ''){
           this.params.push({
           name: this.nameOfParam,
@@ -215,6 +222,7 @@ export default {
         this.unique = false;
         this.required = false;
       }else {
+        this.display = false;
         this.error = true;
         this.msg = 'Params must have name';
         setTimeout( () => {
@@ -225,7 +233,7 @@ export default {
     },
     createResource(){
       if(this.mode === "Edit Resource"){
-        if(this.tempResource.params.length != this.params.length){
+        if(this.tempResource.params.length !== this.params.length || this.tempResource.params.length === this.params.length){
           let petitions = []
           if(this.get === true){
             petitions.push("GET")
@@ -318,9 +326,13 @@ export default {
         const index = this.params.indexOf(param)
         this.params.splice(index, 1)
       }
+      if(this.params.length === 0){
+        this.display = false;
+      }
     },
     editResource (resource){
       axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
+        this.open = true
         if(resource.petitions.includes( 'GET' )){
           this.get = true;
         }else{
@@ -349,6 +361,7 @@ export default {
       })
     },
     addResource (){
+      this.open = true;
       this.get = true;
       this.put = true;
       this.post = true;
@@ -401,6 +414,9 @@ export default {
     },
     redirectToHome() {
       this.$router.push({ name: 'Home' });
+    },
+    close() {
+      this.open = false
     }
   },
   computed: {
@@ -411,8 +427,6 @@ export default {
     },
     resourceUrl: function() {
       return this.tempResourceUrl + "/" + this.resourceName
-    },
-    lessThanZero: function () {
     }
   }
 }
@@ -538,7 +552,7 @@ export default {
   border: 1px solid #27ae60;
 }
 .control-panel span.cerrar{
-  width: 170px;
+  width: 175px;
   height: 29px;
   text-align: right;
 }
@@ -751,8 +765,8 @@ fieldset legend{
 }
 
 .param-list-box ul li span{
-  width: 60px;
-  padding-left: 10px;
+  width: 65px;
+  padding-left: 7px;
 }
 
 .param-list-box ul a{
@@ -762,7 +776,7 @@ fieldset legend{
   padding: 0px;
   background-color:  #e74c3c ;
   border-radius: 3px;
-  margin-left: 2px;
+  margin-left: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -776,9 +790,9 @@ fieldset legend{
 .finish-all-box {
   margin-top: 10px;
   padding-left: 0px;
-  height: 80px;
+  height: 50px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
@@ -788,6 +802,16 @@ fieldset legend{
   padding: 10px;
   background-color:  #327952;
   border-radius: 3px;
+  margin-left: 10px;
+}
+
+.msgs {
+  width: 102%;
+  margin-left: -3px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .msg {
@@ -919,6 +943,7 @@ nav {
 .left img{
   width: 150px;
   height: 40px;
+  cursor: pointer;
 }
 li.left.menu{
   margin-left: 10px;

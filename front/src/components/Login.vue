@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="Login">
     <nav>
+      <img src="../../build/eep_horizontal.svg" alt="" @click="redirectToHome()">
       <form action="">
-        <img src="../../build/eep_horizontal.svg" alt="">
-        <label >Email</label>
-        <input type="text" placeholder="Email..." id="email_field" v-model="username"/>
+        <label >Username</label>
+        <input type="text" placeholder="Username..." id="email_field" v-model="username"/>
         <label >Password</label>
         <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
-        <a @click="login()">Sign In</a>
+        <a @click="login()"  @keypress.enter="login()">Sign In</a>
       </form>  
     </nav>
   </div>
@@ -32,8 +32,26 @@ export default {
   },
   methods: {
     async login() {
-      await this.getToken();
-      this.sendData();
+      if(checkInputNotEmpty(this.password, this.username)){
+        this.state = false;
+        axios.get('http://localhost:4000/api/users').then(async res =>{
+        this.users = res.data
+        const user = this.users.find(user => (user.username === this.username && user.password === this.password));
+        if (user != undefined) {
+          await this.getToken();
+          this.sendData();
+          this.$router.push({ name: 'Resource', params: { username : user.username }});
+        } else {
+          this.msg = 'Username or Password Incorrect'
+          this.state = true;
+        }}).catch( res => {
+          this.msg = 'Network Error'
+          this.state = true;
+        });
+      }else {
+        this.msg = 'Username or Password is Empty'
+        this.state = true;
+      }
     },
     getToken(){
       return new Promise((resolve, reject) => {
@@ -52,15 +70,29 @@ export default {
       if(localStorage.token != undefined){
         this.$router.push({ name: 'Resource', params: { username : this.username }});
       }
+    },
+    redirectToHome() {
+      this.$router.push({ name: 'Home' });
     }
   }
 }
+  function checkInputNotEmpty(password, username) {
+    if(username != '' && password != '' ){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-body {
+.Login {
   background-color:  #327952;
+}
+body{
+  background-color:  #327952 !important;
 }
 h3 {
   width: 100%;
@@ -81,12 +113,17 @@ label {
 }
 nav {
   width: 100%;
-  height: 796px;
+  height: 959px;
   /*IMPORTANTE*/
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color:  #327952;
+}
+nav img{
+  width: 200px;
+  height: 150px;
+  cursor: pointer;
 }
 nav form {
   width: 300px;
@@ -113,19 +150,23 @@ nav form a {
   margin-top: 20px;
   border-radius: 3px;
   background-color:    #F7A500;
+  font-weight: 700;
   width: 200px;
   border: 0px;
   color: white;
   padding: 10px;
-  font-size: 18px;
+  font-size: 15px;
   border-radius: 10px;
 }
 label.msg {
   color: red;
   border: 1px solid red;
+  margin-top: 20px;
   display: flex;
   padding: 5px;
   background-color:  #fdedec;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 </style>

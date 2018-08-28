@@ -15,6 +15,11 @@ export default {
     font-family: LatoMontserrat;
     src: url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700,900'),
 }
+body,html {
+  margin: 0px;
+  padding: 0px;
+  max-height: 959px;
+}
 ul {
   list-style: none;
   margin: 0px;
@@ -44,9 +49,6 @@ button{
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
-}
-body {
-  margin: 0px;
 }
 * {
   font-weight: 400;
