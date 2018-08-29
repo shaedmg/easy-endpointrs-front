@@ -18,6 +18,7 @@
         <li class="rigth">
           <p>{{ this.username }}</p>
           <img src="" alt="">
+          <span class="menu-profile"> <a class="logout" @click="logOut()">Logout</a> </span>
         </li>
       </ul>
     </nav>
@@ -27,18 +28,24 @@
         <a @click="addResource ()" >Create Resource</a>
         <ul>
           <li v-for="resource in filterResource" :key="resource.id">
-            <span class="justify-left">
-              <h2>{{resource.name}}</h2>
-            </span>
-            <span>
-              <ul>
-                <li v-for="petition in resource.petitions" :key="petition.id">{{petition}}</li>
-              </ul>
-            </span>
-            <span class="justify-right">
-              <a class="param" @click="editResource(resource)">Edit</a>
-              <a class="red param" @click="deleteResource(resource)">Delete</a>
-            </span>
+            <div>
+              <span class="justify-left">
+                <h2>/{{resource.name}}</h2>
+              </span>
+              <span>
+                <ul v-if="resource.petitions !== undefined">
+                  <li class="get" v-if="resource.petitions[0] !== undefined">{{resource.petitions[0]}}</li>
+                  <li class="put" v-if="resource.petitions[1] !== undefined">{{resource.petitions[1]}}</li>
+                  <li class="post" v-if="resource.petitions[2] !== undefined">{{resource.petitions[2]}}</li>
+                  <li class="delete" v-if="resource.petitions[3] !== undefined">{{resource.petitions[3]}}</li>
+                </ul>
+              </span>
+              <span class="justify-right">
+                <a class="param" @click="editResource(resource)">Edit</a>
+                <a class="red param" @click="deleteResource(resource)">Delete</a>
+              </span>
+            </div>
+            <span class="url">{{resource.url}}</span>
           </li>
         </ul>
       </div>
@@ -48,13 +55,13 @@
         </span>
         <span class="name-box">
           <label>Resource Name:<input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'"></label>
-          <div>{{ resourceUrl }}</div>
+          <span class="url-c"><div class="email">{{ resourceUrl }}</div><div class="copy" @click="copy(resourceUrl)">{{copyText}}</div></span>
         </span>
         <span class="petitions-box">
           <label class="get">GET </label><input type="checkbox" v-model="get">
           <label class="put">PUT </label><input type="checkbox" v-model="put">
           <label class="post">POST</label><input type="checkbox" v-model="post">
-          <label class="delete">DELETE</label><input type="checkbox" v-model="post">
+          <label class="delete">DELETE</label><input type="checkbox" v-model="delte">
         </span>
         <fieldset>
         <legend>Add Param</legend>
@@ -82,7 +89,7 @@
           </span>
           <ul>
             <li v-for="param in params" :key="param.name">
-              <span>{{ param.name }}</span>
+              <span>{{param.name}}</span>
               <span>{{param.type}}</span>
               <span>{{param.required}}</span>
               <span>{{param.unique}}</span>
@@ -111,10 +118,12 @@ export default {
     return {
       url: 'http://localhost:5000/api/resources',
       open: false,
+      copyText : "Copy",
       display: false,
       get: true,
       put: true,
       post: true,
+      delte:true,
       username: '',
       msg: '',
       downloadMsg: '',
@@ -130,7 +139,7 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [{name: "Mesas"}],
+      resources: [{name: "mesas", url: "http://localhost:9000/mesas",petitions: []},{name: "mesas", url: "http://localhost:9000/mesas",petitions: []}],
       params: [],
       tempResourceUrl: `http://localhost:9000`,
       resourceName:'',
@@ -138,12 +147,14 @@ export default {
     }
   },
   created(){
+    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
+    */
   },
   methods: {
     getResources(){
@@ -151,13 +162,13 @@ export default {
     },
     getResourceUrl() {
       const resourceName = this.resourceName
-      this.resourceUrl = 'http://localhost:9000/'+ resourceName
+      this.resourceUrl = 'http://localhost:9000/' + resourceName
     },
     addParam() {
-      if(this.params.length === 0){
-        this.display = true;
-      }
       if(this.nameOfParam != ''){
+          if(this.params.length === 0){
+            this.display = true;
+          }
           this.params.push({
           name: this.nameOfParam,
           model: `{ ${[this.nameOfParam]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
@@ -190,6 +201,9 @@ export default {
           }
           if(this.post === true){
             petitions.push("POST")
+          }
+          if(this.delte === true){
+            petitions.push("DELETE")
           }
           const resource = {
             url: this.resourceUrl,
@@ -225,6 +239,9 @@ export default {
           }
           if(this.post === true){
             petitions.push("POST")
+          }
+          if(this.delte === true){
+            petitions.push("DELETE")
           }
           const resource = {
             url: this.resourceUrl.toString(),
@@ -280,6 +297,9 @@ export default {
     editResource (resource){
       axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
         this.open = true
+        if(resource.params.length === 0){
+          this.display = false;
+        }
         if(resource.petitions.includes( 'GET' )){
           this.get = true;
         }else{
@@ -295,6 +315,11 @@ export default {
         }else{
           this.post = false;
         }
+        if(resource.petitions.includes( 'DELETE' )){
+          this.delte = true;
+        }else{
+          this.delte = false;
+        }
         this.resources = res.data
         this.msg = '';
         this.good = false;
@@ -309,9 +334,11 @@ export default {
     },
     addResource (){
       this.open = true;
+      this.display = false;
       this.get = true;
       this.put = true;
       this.post = true;
+      this.delte = true;
       this.msg = '';
       this.good = false;
       this.error = false;
@@ -364,6 +391,22 @@ export default {
     },
     close() {
       this.open = false
+    },
+    logOut(){
+      window.localStorage.removeItem("token")
+      this.$router.push({ name: 'Login'});
+    },
+    copy(text) {
+      var texto = document.querySelector('.email');
+      var range = document.createRange();
+      range.selectNode(texto);
+      window.getSelection().addRange(range);
+      document.execCommand(`copy`);
+      window.getSelection().removeAllRanges();
+      this.copyText = "Copied"
+      setTimeout( () => {
+        this.copyText = "Copy"
+      }, 5000)
     }
   },
   computed: {
@@ -423,16 +466,34 @@ export default {
 
 .resources-list ul li {
   width: 100%;
-  height: 40px;
+  height: 65px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   margin-top: 5px;
   background-color: white;
-  border-radius: 3px;
   border: 0.5px solid #b5b5b5;
+  position: relative;
 }
 
+.resources-list ul li div{
+  width: 100%;
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.resources-list ul li span.url {
+  width: 94%;
+  height: 50px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  color:#327952;
+  font-size: 13px;
+}
 .resources-list a.param.red {
   background-color:  #e74c3c;
 }
@@ -453,8 +514,9 @@ export default {
 
 .resources-list ul li span {
   width: 150px;
-  height: 100%;
+  height: 40px;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
@@ -543,9 +605,19 @@ export default {
   color: #327952;
   font-size: 17px;
 }
+.name-box span.url-c{
+  width: 100%;
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: #327952;
+  font-size: 17px;
+}
 
 .name-box div{
-  width: 95%;
+  width: 70%;
   height: 40px;
   margin-top: 5px;
   display: flex;
@@ -555,7 +627,20 @@ export default {
   border-radius: 3px;
   background-color: #d5ffd7;
 }
-
+.name-box div.copy{
+  width: 20%;
+  height: 40px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:  #327952;
+  border-radius: 3px;
+  background-color: white;
+  margin-left: 5px;
+  border: 1px solid #327952;
+  cursor: pointer;
+}
 .name-box input{
   height: 30px;
   padding-left: 10px;
@@ -853,7 +938,23 @@ nav {
   display: flex;
   justify-content: right;
   align-items: center;
+  position: relative;
 }
+.menu-profile{
+  position: absolute;
+  top: 20px;
+  left: 110px;
+  width: 100px;
+  height: 30px;
+  background-color: #327952;
+}
+
+.menu-profile .logout {
+  background-color: #ed0039;
+  padding: 5px 15px 5px 15px;
+  border-radius: 20px;
+}
+
 .rigth img{
   width: 30px;
   height: 30px;
