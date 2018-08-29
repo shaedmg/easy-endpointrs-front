@@ -38,6 +38,7 @@ export default {
       password: '',
       passwordConfirmed: '',
       msg: '',
+      ip: '',
       state: false,
       good: false,
       users: []
@@ -54,35 +55,44 @@ export default {
             password: this.password
           })
           .then((response) => {
-            this.state = false;
-            this.good = true;
-            this.msg = "Created Successfully"
-            
-            setTimeout( () => {
-              this.msg = "";
-              this.msg = "redirecting... :)"
-            }, 3000)
-            
-            localStorage.setItem("token", response.data);
-            axios.get(`http://localhost:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
-            .then(()=>{
-                axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
-                  this.$router.push({ name: 'Login'});
-                }).catch(res => {
-                  this.good = false;
-                  this.state = true
-                  this.msg = "Network Error"
-                  setTimeout( () => {
-                    this.state = false;
-                  }, 3000)
-                })
-            })
-          }).catch(response => {
-            this.state = true
-            this.msg = response.response.data[0]
-            setTimeout( () => {
+            axios.get(`http://localhost:4000/api/users/${this.username}`)
+            .then((res)=>{
+              console.log("hello world");
+              console.log("Esta es la response de mierda mierda" + res.data.backend);
+              this.ip = res.data.backend;
+              console.log("Esta mierda es la ippp:" + this.ip);
               this.state = false;
-            }, 3000)
+              this.good = true;
+              this.msg = "Created Successfully"
+              
+              setTimeout( () => {
+                this.msg = "";
+                this.msg = "redirecting... :)"
+              }, 3000)
+              
+              localStorage.setItem("token", response.data);
+              localStorage.setItem("ip", res.data.backend);
+              console.log("Esta mierda es la ippp:" + this.ip);
+              axios.get(`http://${localStorage.ip}:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
+              .then(()=>{
+                  axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
+                    this.$router.push({ name: 'Login'});
+                  }).catch(res => {
+                    this.good = false;
+                    this.state = true
+                    this.msg = "Network Error"
+                    setTimeout( () => {
+                      this.state = false;
+                    }, 3000)
+                  })
+              })
+            }).catch(response => {
+              this.state = true
+              this.msg = response.response.data[0]
+              setTimeout( () => {
+                this.state = false;
+              }, 3000)
+            })
           })
         }else{
           this.state = true;

@@ -28,6 +28,7 @@ export default {
       password: '',
       msg: '',
       state: false,
+      ip: ''
     }
   },
   created() {
@@ -42,16 +43,23 @@ export default {
     },
     getToken(){
       return new Promise((resolve, reject) => {
-        axios.post('http://localhost:4000/signin', {
-            username: this.username,
-            password: this.password
-        }).then(function(res){
-          localStorage.setItem("token", res.data);
-          resolve();
-        }).catch(res =>{
-          this.state = true;
-          this.msg = res.response.data
-        });
+        axios.get(`http://localhost:4000/api/users/${this.username}`)
+        .then((res)=>{
+          this.ip = res.data.backend;
+          localStorage.setItem("ip", res.data.backend);
+
+          axios.post('http://localhost:4000/signin', {
+              username: this.username,
+              password: this.password
+          }).then(function(res){
+            localStorage.setItem("token", res.data);
+            resolve();
+          }).catch(res =>{
+            this.state = true;
+            this.msg = res.response.data
+          });
+        })
+
       })
       
     },

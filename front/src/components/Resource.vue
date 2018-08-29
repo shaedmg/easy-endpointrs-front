@@ -116,7 +116,7 @@ export default {
   name: 'Resource',
   data () {
     return {
-      url: 'http://localhost:5000/api/resources',
+      url: `http://${localStorage.ip}:5000/api/resources`,
       open: false,
       copyText : "Copy",
       display: false,
@@ -139,22 +139,20 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [{name: "mesas", url: "http://localhost:9000/mesas",petitions: []},{name: "mesas", url: "http://localhost:9000/mesas",petitions: []}],
+      resources: [{name: "mesas", url: `http://${localStorage.ip}:9000/mesas`,petitions: []},{name: "mesas", url: `http://${localStorage.ip}:9000/mesas`,petitions: []}],
       params: [],
-      tempResourceUrl: `http://localhost:9000`,
+      tempResourceUrl: `http://${localStorage.ip}:9000`,
       resourceName:'',
       downloading: false
     }
   },
   created(){
-    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
       this.username = this.$route.params.username;
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
-    */
   },
   methods: {
     getResources(){
@@ -162,7 +160,7 @@ export default {
     },
     getResourceUrl() {
       const resourceName = this.resourceName
-      this.resourceUrl = 'http://localhost:9000/' + resourceName
+      this.resourceUrl = `http://${localStorage.ip}:9000/` + resourceName
     },
     addParam() {
       if(this.nameOfParam != ''){
@@ -354,7 +352,7 @@ export default {
         this.downloadgood = true;
         this.downloadMsg = "Downloading..."
         axios({
-          url: 'http://localhost:5000/api/resources/downloadAPI',
+          url: `http://${localStorage.ip}:5000/api/resources/downloadAPI`,
           method: 'GET',
           responseType: 'blob', // important
           headers: { Authorization: localStorage.token}
@@ -394,6 +392,7 @@ export default {
     },
     logOut(){
       window.localStorage.removeItem("token")
+      window.localStorage.removeItem("ip")
       this.$router.push({ name: 'Login'});
     },
     copy(text) {
@@ -492,7 +491,7 @@ export default {
   justify-content: left;
   align-items: center;
   color:#327952;
-  font-size: 13px;
+  font-size: 11px;
 }
 .resources-list a.param.red {
   background-color:  #e74c3c;
