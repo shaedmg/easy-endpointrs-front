@@ -15,7 +15,7 @@
           <label>Password</label>
           <input type="password" placeholder="Password..." v-model="password">
           <label>Confirm Password</label>
-          <input type="password" placeholder="Confirm Password..." v-model="passwordConfirmed" @keyup="createUser()">
+          <input type="password" placeholder="Confirm Password..." v-model="passwordConfirmed" @keypress.enter="createUser()">
           <a @click="createUser()">Register</a>
         </span>
       </form>
@@ -57,12 +57,15 @@ export default {
             this.state = false;
             this.good = true;
             this.msg = "Created Successfully"
+            
+            setTimeout( () => {
+              this.msg = "";
+              this.msg = "redirecting... :)"
+            }, 3000)
+            
             localStorage.setItem("token", response.data);
             axios.get(`http://localhost:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
             .then(()=>{
-                this.state = false;
-                this.good = true;
-                this.msg = "redirecting... :)"
                 axios.get(`http://localhost:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
                   this.$router.push({ name: 'Login'});
                 }).catch(res => {

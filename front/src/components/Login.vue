@@ -30,28 +30,15 @@ export default {
       state: false,
     }
   },
+  created() {
+    axios.get('http://localhost:4000/api/users').then(res =>{
+     this.users = res.data
+    });
+  },
   methods: {
     async login() {
-      if(checkInputNotEmpty(this.password, this.username)){
-        this.state = false;
-        axios.get('http://localhost:4000/api/users').then(async res =>{
-        this.users = res.data
-        const user = this.users.find(user => (user.username === this.username && user.password === this.password));
-        if (user != undefined) {
-          await this.getToken();
-          this.sendData();
-          this.$router.push({ name: 'Resource', params: { username : user.username }});
-        } else {
-          this.msg = 'Username or Password Incorrect'
-          this.state = true;
-        }}).catch( res => {
-          this.msg = 'Network Error'
-          this.state = true;
-        });
-      }else {
-        this.msg = 'Username or Password is Empty'
-        this.state = true;
-      }
+      await this.getToken();
+      this.sendData();
     },
     getToken(){
       return new Promise((resolve, reject) => {
@@ -61,6 +48,9 @@ export default {
         }).then(function(res){
           localStorage.setItem("token", res.data);
           resolve();
+        }).catch(res =>{
+          this.state = true;
+          this.msg = res.response.data
         });
       })
       
