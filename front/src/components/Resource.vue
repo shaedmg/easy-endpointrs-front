@@ -7,6 +7,7 @@
           <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
         </li>
         <li class="left menu">
+          <a v-bind:href="urlDoc">View API doc</a>
           <a @click="downloadAPI()" :disabled="downloading" >Download API</a>
           <span class="msg-s" v-if="downloadgood">
             {{ downloadMsg }}
@@ -17,7 +18,6 @@
         </li>
         <li class="rigth">
           <p>{{ this.username }}</p>
-          <img src="" alt="">
           <span class="menu-profile"> <a class="logout" @click="logOut()">Logout</a> </span>
         </li>
       </ul>
@@ -117,6 +117,7 @@ export default {
   data () {
     return {
       url: `http://${localStorage.ip}:5000/api/resources`,
+      urlDoc: `http://${localStorage.ip}:9000/${this.username}/docs`,
       open: false,
       copyText : "Copy",
       display: false,
@@ -147,12 +148,16 @@ export default {
     }
   },
   created(){
+    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
+      **/
       this.username = this.$route.params.username;
+      /*
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
+    */
   },
   methods: {
     getResources(){
@@ -932,7 +937,7 @@ nav {
   align-items: center;
 }
 .rigth{
-  width: 100px;
+  width: 120px;
   height: 60px;
   display: flex;
   justify-content: right;
@@ -966,7 +971,7 @@ nav {
   font-size: 12px;
 }
 .left {
-  width: 470px;
+  width: 400px;
   height: 60px;
   display: flex;
   justify-content: left;
@@ -988,7 +993,10 @@ nav {
 }
 li.left.menu{
   margin-left: 10px;
-  width: 240px;
+  width: 450px;
+}
+li.left.menu a{
+  margin-left: 10px;
 }
 .left.menu a:hover {
   -webkit-box-shadow: inset 0px 0px 94px -61px rgba(255,255,255,1);
