@@ -57,7 +57,7 @@
         </span>
         <span class="name-box">
           <label>Resource Name:<input type="text" placeholder="Name..." v-model="resourceName" :disabled="this.mode === 'Edit Resource'"></label>
-          <span class="url-c"><div class="email">{{ resourceUrl }}</div><div class="copy" @click="copy(resourceUrl)">{{copyText}}</div></span>
+          <span class="url-c"><div class="email">{{ resourceUrlA }}</div><div class="copy" @click="copy(resourceUrl)">{{copyText}}</div></span>
         </span>
         <span class="petitions-box">
           <!--
@@ -164,10 +164,6 @@ export default {
     getResources(){
       axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => this.resources = res.data);
     },
-    getResourceUrl() {
-      const resourceName = this.resourceName
-      this.resourceUrl = `http://${localStorage.ip}:9000/` + resourceName
-    },
     addParam() {
       if(this.nameOfParam != ''){
           if(this.params.length === 0){
@@ -235,7 +231,6 @@ export default {
         }
       }else{
         if(this.resourceName != '' && this.params.length != 0 ){
-          this.getResourceUrl()
           /*
           let petitions = []
           if(this.get === true){
@@ -262,10 +257,12 @@ export default {
               this.resources.push(resource)
               this.good = true;
               this.msg = 'correctly created Resource';
-              setTimeout( () => {
+              setTimeout( async () => {
                 this.good = false;
                 this.msg = ''
+                await this.getResources()
               }, 5000)
+
           })
           .catch(error => {
             this.resourceUrl = '';
@@ -303,13 +300,21 @@ export default {
       }
     },
     editResource (resource){
-      axios.get(this.url, {headers: { Authorization: localStorage.token}}).then(res => {
         this.open = true
         if(resource.params.length === 0){
           this.display = false;
         }else {
           this.display = true;
         }
+        this.msg = '';
+        this.good = false;
+        this.error = false;
+        this.tempResource = Object.assign({}, resource)
+        this.tempResource.params = resource.params.slice()
+        this.resourceUrl = resource.url.toString();
+        this.resourceName = resource.name.toString();
+        this.params = resource.params;
+        this.mode = 'Edit Resource'
         /*
         if(resource.petitions.includes( 'GET' )){
           this.get = true;
@@ -331,17 +336,6 @@ export default {
         }else{
           this.delte = false;
         }*/
-        this.resources = res.data
-        this.msg = '';
-        this.good = false;
-        this.error = false;
-        this.tempResource = Object.assign({}, resource)
-        this.tempResource.params = resource.params.slice()
-        this.resourceUrl = resource.url.toString();
-        this.resourceName = resource.name.toString();
-        this.params = resource.params;
-        this.mode = 'Edit Resource'
-      })
     },
     addResource (){
       this.open = true;
@@ -430,7 +424,7 @@ export default {
           return resource.name.match(this.search)
         })
     },
-    resourceUrl: function() {
+    resourceUrlA: function() {
       return this.tempResourceUrl + "/" + this.resourceName
     }
   }

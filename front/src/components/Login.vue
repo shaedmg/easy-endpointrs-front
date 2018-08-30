@@ -43,7 +43,6 @@ export default {
     },
     getToken(){
       return new Promise((resolve, reject) => {
-        console.log("sars")
         axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
         .then((res)=>{
           this.ip = res.data.backend;

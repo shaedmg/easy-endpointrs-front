@@ -53,47 +53,71 @@ export default {
   methods: {
     createUser() {
       if(this.isPressed){
-          if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
-            
-            this.good = true;
-            this.isPressed = false;
-            this.msg = "In a few moments you will be redirected..."
-            axios.post('http://www.easyendpoints.com:4000/api/users', {
-              name: this.name,
-              username: this.username,
-              email: this.email,
-              password: this.password
-            })
-            .then((response) => {
-              this.msg = "Created Successfully"
-              this.good = true;
-              axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
-              .then((res)=>{
-                localStorage.setItem("token", response.data);
-                localStorage.setItem("ip", res.data.backend);
-                /*
-                axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
-                      this.$router.push({ name: 'Login'});
-                }).catch(res => {
-                      this.good = false;
-                      this.state = true
-                      this.msg = "Network Error"
+          if(checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
+            if(checkPasswordConfirmed(this.password, this.passwordConfirmed)){
+              if(moreThanSix(this.password)){
+                if(validatePassword(this.password)){  
+                  this.good = true;
+                  this.isPressed = false;
+                  this.msg = "Creating a new user... You will be redirected in a few moments if no errors happens ..."
+                  axios.post('http://www.easyendpoints.com:4000/api/users', {
+                    name: this.name,
+                    username: this.username,
+                    email: this.email,
+                    password: this.password
+                  })
+                  .then((response) => {
+                    this.msg = "Created Successfully"
+                    this.good = true;
+                    axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
+                    .then((res)=>{
+                      localStorage.setItem("token", response.data);
+                      localStorage.setItem("ip", res.data.backend);
+                      /*
+                      axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
+                            this.$router.push({ name: 'Login'});
+                      }).catch(res => {
+                            this.good = false;
+                            this.state = true
+                            this.msg = "Network Error"
+                          setTimeout( () => {
+                            this.state = false;
+                          }, 3000)
+                        })*/
+                        setTimeout( () => {
+                            this.$router.push({ name: 'Login'});
+                          }, 3000)
+                      })
+                  }).catch(error => {
+                    this.good = false;
+                    this.state = true;
+                    this.msg = error.response.data[0]
                     setTimeout( () => {
                       this.state = false;
-                    }, 3000)
-                  })*/
+                      this.isPressed = true;
+                    }, 10000)
+                  })
+                }else {
+                  this.msg = "Password not accept special characters"
+                  this.state = true;
                   setTimeout( () => {
-                      this.$router.push({ name: 'Login'});
-                    }, 3000)
-                })
-            }).catch(error => {
-              this.state = true;
-              this.msg = error.response.data[0]
+                    this.state = false;
+                  }, 3000)
+                }
+              }else {
+                this.msg = "Password must have more than 6 characters"
+                this.state = true;
+                setTimeout( () => {
+                  this.state = false;
+                }, 3000)
+              }
+          }else {
+            this.msg = "Password and Corfirm Password incorrect"
+            this.state = true;
               setTimeout( () => {
                 this.state = false;
-                this.isPressed = true;
-              }, 7000)
-            })
+              }, 3000)
+          }
         } else {
           this.msg = "Any camp Empty or Invalid"
           this.state = true;
@@ -122,6 +146,23 @@ function checkPasswordConfirmed(password, passwordConfirmed) {
    }else{
      return false;
    }
+}
+function validatePassword(texto) {
+  var filtro = 'abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890';//Caracteres validos
+	
+  for (var i=0; i<texto.length; i++)
+    if (filtro.indexOf(texto.charAt(i)) == -1) {
+      return false;
+    }
+
+  return true;
+}
+function moreThanSix(password) {
+  if(password.length > 6){
+    return true
+  }else {
+    return false
+  }
 }
 </script>
 
