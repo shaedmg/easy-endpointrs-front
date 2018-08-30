@@ -53,12 +53,11 @@ export default {
   methods: {
     createUser() {
       if(this.isPressed){
-          console.log("culoooooooooo");
           if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
             
             this.good = true;
             this.isPressed = false;
-            this.msg = "In a few moment you will be redirect"
+            this.msg = "In a few moments you will be redirected..."
             axios.post('http://www.easyendpoints.com:4000/api/users', {
               name: this.name,
               username: this.username,
@@ -68,23 +67,8 @@ export default {
             .then((response) => {
               this.msg = "Created Successfully"
               this.good = true;
-              setTimeout(() => {
-                console.log("This is the first message:" + this.msg);
-              }, 3000)
-              
               axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
               .then((res)=>{
-                setTimeout(() => {
-                  console.log("This is the first message:" + this.msg);
-                  console.log("Esto es un puta mierda:" + res.data);
-                }, 3000)
-                
-                setTimeout( () => {
-                  this.msg = "";
-                  console.log("This is the second message:" + this.msg);
-                  this.msg = "redirecting... :)";
-                  console.log("This is the second message:" + this.msg);
-                }, 7000)
                 localStorage.setItem("token", response.data);
                 localStorage.setItem("ip", res.data.backend);
                 /*

@@ -408,6 +408,7 @@ export default {
     logOut(){
       window.localStorage.removeItem("token")
       window.localStorage.removeItem("ip")
+      window.localStorage.removeItem("username")
       this.$router.push({ name: 'Login'});
     },
     copy(text) {
