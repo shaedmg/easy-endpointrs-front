@@ -208,7 +208,7 @@ export default {
           }
           */
           const resource = {
-            url: this.resourceUrl,
+            url: this.resourceUrlA,
             name: this.resourceName,
             params: this.params,
             // petitions: petitions
