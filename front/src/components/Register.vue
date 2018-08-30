@@ -46,7 +46,7 @@ export default {
     }
   },
   created() {
-    if(localStorage.token != undefined){
+    if(localStorage.token != undefined  && localStorage.username != undefined){
       this.$router.push({ name: 'Resource', params: { username : localStorage.username }})
     }
   },
@@ -58,7 +58,7 @@ export default {
             
             this.good = true;
             this.isPressed = false;
-            this.msg = "Conectando con el servidor"
+            this.msg = "In a few moment you will be redirect"
             axios.post('http://www.easyendpoints.com:4000/api/users', {
               name: this.name,
               username: this.username,

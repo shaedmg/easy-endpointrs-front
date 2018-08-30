@@ -32,7 +32,7 @@ export default {
     }
   },
   created() {
-    if(localStorage.token != undefined){
+    if(localStorage.token != undefined && localStorage.username != undefined){
       this.$router.push({ name: 'Resource', params: { username : localStorage.username }})
     }
   },

@@ -33,12 +33,14 @@
                 <h2>/{{resource.name}}</h2>
               </span>
               <span>
+                <!--
                 <ul v-if="resource.petitions !== undefined">
                   <li class="get" v-if="resource.petitions[0] !== undefined">{{resource.petitions[0]}}</li>
                   <li class="put" v-if="resource.petitions[1] !== undefined">{{resource.petitions[1]}}</li>
                   <li class="post" v-if="resource.petitions[2] !== undefined">{{resource.petitions[2]}}</li>
                   <li class="delete" v-if="resource.petitions[3] !== undefined">{{resource.petitions[3]}}</li>
                 </ul>
+                -->
               </span>
               <span class="justify-right">
                 <a class="param" @click="editResource(resource)">Edit</a>
@@ -213,7 +215,7 @@ export default {
             url: this.resourceUrl,
             name: this.resourceName,
             params: this.params,
-            petitions: petitions
+            // petitions: petitions
           }
           axios.put(this.url+ '/' + this.resourceName, resource, {headers: { Authorization: localStorage.token}}).then(res => {
             this.good = true;
