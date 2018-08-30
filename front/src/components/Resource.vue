@@ -307,6 +307,8 @@ export default {
         this.open = true
         if(resource.params.length === 0){
           this.display = false;
+        }else {
+          this.display = true;
         }
         /*
         if(resource.petitions.includes( 'GET' )){
