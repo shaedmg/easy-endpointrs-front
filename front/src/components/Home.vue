@@ -57,6 +57,11 @@ export default {
     return {
     }
   },
+  created(){
+    if(localStorage.token != undefined){
+      this.$router.push({ name: 'Resource', params: { username : localStorage.username }})
+    }
+  },
   methods: {
     login(){
       this.$router.push({ name: 'Login'});
@@ -170,7 +175,7 @@ nav li a {
   background-color:#F7A500;
 }
 .header p {
-  width: 540px;
+  width: 600px;
   font-size: 17px;
   margin-top: 30px;
 }
@@ -183,7 +188,7 @@ nav li a {
   color:#F7A500;
 }
 .header h1 {
-  width: 600px;
+  width: 603px;
   margin: 0px;
   text-align: left;
   font-size: 40px;

@@ -7,8 +7,8 @@
           <input type="text" v-model="search" placeholder="Search Resources..." name="" id="" >
         </li>
         <li class="left menu">
-          <a v-bind:href="urlDoc">View API doc</a>
-          <a @click="downloadAPI()" :disabled="downloading" >Download API</a>
+          <!--<a v-bind:href="urlDoc">View API doc</a>-->
+          <!--<a @click="downloadAPI()" :disabled="downloading" >Download API</a>-->
           <span class="msg-s" v-if="downloadgood">
             {{ downloadMsg }}
           </span>
@@ -58,10 +58,12 @@
           <span class="url-c"><div class="email">{{ resourceUrl }}</div><div class="copy" @click="copy(resourceUrl)">{{copyText}}</div></span>
         </span>
         <span class="petitions-box">
+          <!--
           <label class="get">GET </label><input type="checkbox" v-model="get">
           <label class="put">PUT </label><input type="checkbox" v-model="put">
           <label class="post">POST</label><input type="checkbox" v-model="post">
           <label class="delete">DELETE</label><input type="checkbox" v-model="delte">
+          -->
         </span>
         <fieldset>
         <legend>Add Param</legend>
@@ -141,7 +143,7 @@ export default {
       tempResource: {},
       mode: 'Create Resource',
       autenticated : false,
-      resources: [{name: "mesas", url: `http://${localStorage.ip}:9000/mesas`,petitions: []},{name: "mesas", url: `http://${localStorage.ip}:9000/mesas`,petitions: []}],
+      resources: [],
       params: [],
       tempResourceUrl: `http://${localStorage.ip}:9000`,
       resourceName:'',
@@ -149,16 +151,12 @@ export default {
     }
   },
   created(){
-    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
-    */
       this.username = this.$route.params.username;
-    /*
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
-    */
   },
   methods: {
     getResources(){
@@ -466,7 +464,7 @@ export default {
 
 .resources-list a {
   margin-top: 15px;
-  width: 130px;
+  width: 140px;
   padding: 10px;
   background-color:  #327952;
   border-radius: 3px;
@@ -559,6 +557,8 @@ export default {
 .resources-list span.justify-right {
   justify-content: right;
   padding-right: 5px;
+  padding-left: 170px;
+  padding-top: 15px;
 }
 
 /*   CONTROL PANEL  */
@@ -573,7 +573,7 @@ export default {
   border: 1px solid #27ae60;
 }
 .control-panel span.cerrar{
-  width: 175px;
+  width: 165px;
   height: 29px;
   text-align: right;
 }
@@ -706,10 +706,12 @@ export default {
 
 fieldset {
   padding: 0px;
+  margin: 0px;
   padding-top: 5px;
   width: 370px;
   margin-left: 15px;
   margin-top: 15px;
+  padding-bottom: 20px;
   border: 1px solid#27ae60;
 }
 
@@ -722,13 +724,13 @@ fieldset legend{
 
 .param-box {
   color: #327952;
-  font-size: 10px;
-  padding-bottom: 50px;
+  font-size: 12px;
 }
 .param-box label{
   font-weight: 400;
 }
 .param-box input[type="text"]{
+  width: 130px;
   height: 30px;
   padding-left: 10px;
   margin-left: 0px;
@@ -738,7 +740,6 @@ fieldset legend{
 
 .param-box select{
   height: 38px;
-  margin-left: 0px;
   font-size: 15px;
   border: 0.5px solid #b5b5b5;
 }
@@ -746,6 +747,7 @@ fieldset legend{
 .param-box .checkbox-box{
   width: 180px;
   height: 50px;
+  margin-left: 30px;
   display: flex;
   flex-direction: row;
 }
@@ -840,7 +842,7 @@ fieldset legend{
 }
 
 .finish-all-box a{
-  width: 130px;
+  width: 140px;
   padding: 10px;
   background-color:  #327952;
   border-radius: 3px;
@@ -946,16 +948,15 @@ nav {
   width: 120px;
   height: 60px;
   display: flex;
-  justify-content: right;
+  justify-content: center;
   align-items: center;
-  position: relative;
 }
 .menu-profile{
-  top: 20px;
-  left: 110px;
   width: 100px;
   height: 30px;
-  background-color: #327952;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-profile .logout {

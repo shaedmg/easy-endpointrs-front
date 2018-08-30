@@ -6,9 +6,9 @@
         <label >Username</label>
         <input type="text" placeholder="Username..." id="email_field" v-model="username"/>
         <label >Password</label>
-        <input type="password" placeholder="Password..." id="password_field" v-model="password"/>
+        <input type="password" placeholder="Password..." id="password_field" v-model="password" @keypress.enter="login()"/>
         <label class="msg" v-if="this.state">{{ msg }}</label>
-        <a @click="login()"  @keypress.enter="login()">Sign In</a>
+        <a @click="login()"  >Sign In</a>
       </form>  
     </nav>
   </div>
@@ -32,9 +32,9 @@ export default {
     }
   },
   created() {
-    axios.get('http://www.easyendpoints.com:4000/api/users').then(res =>{
-     this.users = res.data
-    });
+    if(localStorage.token != undefined){
+      this.$router.push({ name: 'Resource', params: { username : localStorage.username }})
+    }
   },
   methods: {
     async login() {
@@ -43,6 +43,7 @@ export default {
     },
     getToken(){
       return new Promise((resolve, reject) => {
+        console.log("sars")
         axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
         .then((res)=>{
           this.ip = res.data.backend;
@@ -56,7 +57,10 @@ export default {
             resolve();
           }).catch(res =>{
             this.state = true;
-            this.msg = res.response.data
+            this.msg = res.response.data;
+            setTimeout( () => {
+
+            },3000)
           });
         })
 

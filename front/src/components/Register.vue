@@ -41,74 +41,84 @@ export default {
       ip: '',
       state: false,
       good: false,
+      isPressed: true,
       users: []
+    }
+  },
+  created() {
+    if(localStorage.token != undefined){
+      this.$router.push({ name: 'Resource', params: { username : localStorage.username }})
     }
   },
   methods: {
     createUser() {
-      if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
-        if(!this.exists()){
-          axios.post('http://www.easyendpoints.com:4000/api/users', {
-            name: this.name,
-            username: this.username,
-            email: this.email,
-            password: this.password
-          })
-          .then((response) => {
-            axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
-            .then((res)=>{
-              console.log("hello world");
-              console.log("Esta es la response de mierda mierda" + res.data.backend);
-              this.ip = res.data.backend;
-              console.log("Esta mierda es la ippp:" + this.ip);
-              this.state = false;
-              this.good = true;
+      if(this.isPressed){
+          console.log("culoooooooooo");
+          if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
+            
+            this.good = true;
+            this.isPressed = false;
+            this.msg = "Conectando con el servidor"
+            axios.post('http://www.easyendpoints.com:4000/api/users', {
+              name: this.name,
+              username: this.username,
+              email: this.email,
+              password: this.password
+            })
+            .then((response) => {
               this.msg = "Created Successfully"
-              
-              setTimeout( () => {
-                this.msg = "";
-                this.msg = "redirecting... :)"
+              this.good = true;
+              setTimeout(() => {
+                console.log("This is the first message:" + this.msg);
               }, 3000)
               
-              localStorage.setItem("token", response.data);
-              localStorage.setItem("ip", res.data.backend);
-              console.log("Esta mierda es la ippp:" + this.ip);/*
-              axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
-                    this.$router.push({ name: 'Login'});
-              }).catch(res => {
-                    this.good = false;
-                    this.state = true
-                    this.msg = "Network Error"
+              axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
+              .then((res)=>{
+                setTimeout(() => {
+                  console.log("This is the first message:" + this.msg);
+                  console.log("Esto es un puta mierda:" + res.data);
+                }, 3000)
+                
+                setTimeout( () => {
+                  this.msg = "";
+                  console.log("This is the second message:" + this.msg);
+                  this.msg = "redirecting... :)";
+                  console.log("This is the second message:" + this.msg);
+                }, 7000)
+                localStorage.setItem("token", response.data);
+                localStorage.setItem("ip", res.data.backend);
+                /*
+                axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
+                      this.$router.push({ name: 'Login'});
+                }).catch(res => {
+                      this.good = false;
+                      this.state = true
+                      this.msg = "Network Error"
+                    setTimeout( () => {
+                      this.state = false;
+                    }, 3000)
+                  })*/
                   setTimeout( () => {
-                    this.state = false;
-                  }, 3000)
-                })*/
-                this.$router.push({ name: 'Login'});
-              })
-          })
-        }else{
+                      this.$router.push({ name: 'Login'});
+                    }, 3000)
+                })
+            }).catch(error => {
+              this.state = true;
+              this.msg = error.response.data[0]
+              setTimeout( () => {
+                this.state = false;
+                this.isPressed = true;
+              }, 7000)
+            })
+        } else {
+          this.msg = "Any camp Empty or Invalid"
           this.state = true;
-          this.msg = "Email or Username already exists"
           setTimeout( () => {
             this.state = false;
           }, 3000)
         }
-      }else {
-        this.state = true;
-        this.msg = "Any camp Empty or Invalid"
-        setTimeout( () => {
-          this.state = false;
-        }, 3000)
       }
-    },
-    exists(){
-      axios.get('http://www.easyendpoints.com:4000/api/users').then(res => this.users = res.data);
-      const user = this.users.find(user => (user.email === this.email || user.username === this.username));
-       if (user != undefined) {
-        return true;
-      } else {
-        return false;
-      }
+      
     },
     redirectToHome() {
       this.$router.push({ name: 'Home' });
@@ -132,9 +142,10 @@ function checkPasswordConfirmed(password, passwordConfirmed) {
 </script>
 
 <style scoped>
-html,body {
+html,
+body {
   height: 100%;
-  background-color:  #327952;
+  background-color: #327952;
   margin: 0px;
 }
 label.msg-s {
@@ -143,7 +154,7 @@ label.msg-s {
   border: 1px solid green;
   display: flex;
   padding: 5px;
-  background-color:  #62ff9e;
+  background-color: #62ff9e;
   justify-content: center;
 }
 h3 {
@@ -170,9 +181,9 @@ nav {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color:  #327952;
+  background-color: #327952;
 }
-nav img{
+nav img {
   width: 200px;
   height: 150px;
   cursor: pointer;
@@ -185,7 +196,7 @@ nav form {
   align-items: center;
   justify-content: center;
 }
-nav form span{
+nav form span {
   width: 250px;
   display: flex;
   flex-direction: column;
@@ -193,7 +204,7 @@ nav form span{
   align-items: center;
   height: 220px;
 }
-nav form input{
+nav form input {
   width: 200px;
   height: 30px;
   padding-left: 10px;
@@ -205,7 +216,7 @@ nav form a {
   height: 20px;
   margin-top: 30px;
   border-radius: 10px;
-  background-color:    #F7A500;
+  background-color: #f7a500;
   width: 200px;
   border: 0px;
   color: white;
@@ -219,7 +230,7 @@ label.msg {
   width: 500px;
   display: flex;
   padding: 5px;
-  background-color:  #fdedec;
+  background-color: #fdedec;
   justify-content: center;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -239,5 +250,4 @@ label.msg-s {
   border-radius: 5px;
   font-size: 12px;
 }
-
 </style>
