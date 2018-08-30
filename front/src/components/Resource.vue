@@ -148,16 +148,16 @@ export default {
     }
   },
   created(){
-    /*
+    
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
-      **/
+      
       this.username = this.$route.params.username;
-      /*
+      
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
-    */
+    
   },
   methods: {
     getResources(){

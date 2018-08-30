@@ -48,14 +48,14 @@ export default {
     createUser() {
       if(checkPasswordConfirmed(this.password, this.passwordConfirmed) && checkInputNotEmpty(this.password, this.username, this.name, this.passwordConfirmed, this.email)){
         if(!this.exists()){
-          axios.post('http://localhost:4000/api/users', {
+          axios.post('http://www.easyendpoints.com:4000/api/users', {
             name: this.name,
             username: this.username,
             email: this.email,
             password: this.password
           })
           .then((response) => {
-            axios.get(`http://localhost:4000/api/users/${this.username}`)
+            axios.get(`http://www.easyendpoints.com:4000/api/users/${this.username}`)
             .then((res)=>{
               console.log("hello world");
               console.log("Esta es la response de mierda mierda" + res.data.backend);
@@ -72,27 +72,19 @@ export default {
               
               localStorage.setItem("token", response.data);
               localStorage.setItem("ip", res.data.backend);
-              console.log("Esta mierda es la ippp:" + this.ip);
-              axios.get(`http://${localStorage.ip}:5000/api/resources/newProject`, {headers: { Authorization: localStorage.token}})
-              .then(()=>{
-                  axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
+              console.log("Esta mierda es la ippp:" + this.ip);/*
+              axios.get(`http://${localStorage.ip}:5000/api/resources/startAPI`, {headers: { Authorization: localStorage.token}}).then(res => {
                     this.$router.push({ name: 'Login'});
-                  }).catch(res => {
+              }).catch(res => {
                     this.good = false;
                     this.state = true
                     this.msg = "Network Error"
-                    setTimeout( () => {
-                      this.state = false;
-                    }, 3000)
-                  })
+                  setTimeout( () => {
+                    this.state = false;
+                  }, 3000)
+                })*/
+                this.$router.push({ name: 'Login'});
               })
-            }).catch(response => {
-              this.state = true
-              this.msg = response.response.data[0]
-              setTimeout( () => {
-                this.state = false;
-              }, 3000)
-            })
           })
         }else{
           this.state = true;
@@ -110,7 +102,7 @@ export default {
       }
     },
     exists(){
-      axios.get('http://localhost:4000/api/users').then(res => this.users = res.data);
+      axios.get('http://www.easyendpoints.com:4000/api/users').then(res => this.users = res.data);
       const user = this.users.find(user => (user.email === this.email || user.username === this.username));
        if (user != undefined) {
         return true;
