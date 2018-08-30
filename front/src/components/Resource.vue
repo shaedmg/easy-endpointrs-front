@@ -166,20 +166,31 @@ export default {
     },
     addParam() {
       if(this.nameOfParam != ''){
-          if(this.params.length === 0){
-            this.display = true;
+          const paramTemp = this.params.find(parm => parm.name === this.nameOfParam)
+          console.log(paramTemp)
+          if(paramTemp === undefined) {
+            if(this.params.length === 0){
+              this.display = true;
+            }
+            this.params.push({
+              name: this.nameOfParam,
+              model: `{ ${[this.nameOfParam]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
+              type: this.type, 
+              required: this.required,
+              unique: this.unique
+            });
+            this.type = 'String';
+            this.nameOfParam = '';
+            this.unique = false;
+            this.required = false;
+          }else {
+            this.error = true;
+            this.msg = 'Nombre de parametro repetido';
+            setTimeout( () => {
+              this.error = false;
+              this.msg = ''
+            }, 5000)
           }
-          this.params.push({
-          name: this.nameOfParam,
-          model: `{ ${[this.nameOfParam]}:{ type: ${this.type}, required: ${this.required}, unique: ${this.unique} } }`,
-          type: this.type, 
-          required: this.required,
-          unique: this.unique
-        });
-        this.type = 'String';
-        this.nameOfParam = '';
-        this.unique = false;
-        this.required = false;
       }else {
         this.error = true;
         this.msg = 'Params must have name';
