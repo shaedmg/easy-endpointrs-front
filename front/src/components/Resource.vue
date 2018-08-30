@@ -247,7 +247,7 @@ export default {
           }
           */
           const resource = {
-            url: this.resourceUrl.toString(),
+            url: this.resourceUrlA.toString(),
             name: this.resourceName.toString(),
             params: this.params.slice(),
           // petitions: petitions
