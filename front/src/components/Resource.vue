@@ -72,6 +72,7 @@
                 <option value="String">String</option>
                 <option value="Number">Number</option>
                 <option value="Boolean">Boolean</option>
+                <option value="Array">Array</option>
           </select>
           <span class="checkbox-box">
             <label>Required<input type="checkbox" v-model="required"></label>
@@ -121,10 +122,10 @@ export default {
       open: false,
       copyText : "Copy",
       display: false,
-      get: true,
-      put: true,
-      post: true,
-      delte:true,
+     // get: true,
+     // put: true,
+     // post: true,
+     // delte:true,
       username: '',
       msg: '',
       downloadMsg: '',
@@ -148,16 +149,16 @@ export default {
     }
   },
   created(){
-    
+    /*
     if(localStorage.token != undefined && localStorage.username === this.$route.params.username){
-      
+    */
       this.username = this.$route.params.username;
-      
+    /*
       this.getResources()
     } else {
       this.$router.push({ name: 'Login'});
     }
-    
+    */
   },
   methods: {
     getResources(){
@@ -195,6 +196,7 @@ export default {
     createResource(){
       if(this.mode === "Edit Resource"){
         if(this.tempResource.params.length !== this.params.length || this.tempResource.params.length === this.params.length){
+          /*
           let petitions = []
           if(this.get === true){
             petitions.push("GET")
@@ -208,6 +210,7 @@ export default {
           if(this.delte === true){
             petitions.push("DELETE")
           }
+          */
           const resource = {
             url: this.resourceUrl,
             name: this.resourceName,
@@ -233,6 +236,7 @@ export default {
       }else{
         if(this.resourceName != '' && this.params.length != 0 ){
           this.getResourceUrl()
+          /*
           let petitions = []
           if(this.get === true){
             petitions.push("GET")
@@ -246,11 +250,12 @@ export default {
           if(this.delte === true){
             petitions.push("DELETE")
           }
+          */
           const resource = {
             url: this.resourceUrl.toString(),
             name: this.resourceName.toString(),
             params: this.params.slice(),
-            petitions: petitions
+          // petitions: petitions
           }
           axios.post(this.url, resource, {headers: { Authorization: localStorage.token}}).then(
             res => {
@@ -303,6 +308,7 @@ export default {
         if(resource.params.length === 0){
           this.display = false;
         }
+        /*
         if(resource.petitions.includes( 'GET' )){
           this.get = true;
         }else{
@@ -322,7 +328,7 @@ export default {
           this.delte = true;
         }else{
           this.delte = false;
-        }
+        }*/
         this.resources = res.data
         this.msg = '';
         this.good = false;
@@ -338,10 +344,12 @@ export default {
     addResource (){
       this.open = true;
       this.display = false;
+      /*
       this.get = true;
       this.put = true;
       this.post = true;
       this.delte = true;
+      */
       this.msg = '';
       this.good = false;
       this.error = false;
@@ -621,8 +629,9 @@ export default {
 }
 
 .name-box div{
-  width: 70%;
+  width: 85%;
   height: 40px;
+  font-size: 11px;
   margin-top: 5px;
   display: flex;
   justify-content: center;
@@ -632,7 +641,7 @@ export default {
   background-color: #d5ffd7;
 }
 .name-box div.copy{
-  width: 20%;
+  width: 10%;
   height: 40px;
   margin-top: 5px;
   display: flex;
@@ -713,8 +722,8 @@ fieldset legend{
 
 .param-box {
   color: #327952;
-  font-size: 15px;
-  position: relative;
+  font-size: 10px;
+  padding-bottom: 50px;
 }
 .param-box label{
   font-weight: 400;
@@ -745,7 +754,6 @@ fieldset legend{
   display: flex;
   align-items: center;
   justify-content: left;
-  padding-left: 17px;
   font-weight: 400;
 }
 
@@ -753,10 +761,8 @@ fieldset legend{
   width: 80px;
   padding: 5px;
   font-size: 12px;
+  margin-left: 20px;
   background-color:  #007c1b;
-  position: absolute;
-  top: 43px;
-  left: 255px;
 }
 
 .param-list-box {
@@ -945,7 +951,6 @@ nav {
   position: relative;
 }
 .menu-profile{
-  position: absolute;
   top: 20px;
   left: 110px;
   width: 100px;
@@ -954,9 +959,9 @@ nav {
 }
 
 .menu-profile .logout {
-  background-color: #ed0039;
+  background-color: #e74c3c;
   padding: 5px 15px 5px 15px;
-  border-radius: 20px;
+  border-radius: 3px;
 }
 
 .rigth img{
@@ -969,6 +974,7 @@ nav {
 .rigth p{
   text-align: right;
   font-size: 12px;
+  margin-right: 10px;
 }
 .left {
   width: 400px;
